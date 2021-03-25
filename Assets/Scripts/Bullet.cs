@@ -31,4 +31,9 @@ public class Bullet : MonoBehaviour
         if(_lifeTimeTimer <= 0)
             gameObject.SetActive(false);
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        gameObject.SetActive(false);
+    }
 }
