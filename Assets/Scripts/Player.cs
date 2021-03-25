@@ -1,16 +1,38 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private Shooting shooting;
+    [SerializeField] private PlayerMovement movement;
+    
+    private Transform _transform;
 
+    private void Awake()
+    {
+        _transform = transform;
+    }
 
     private void Update()
     {
-        if(Input.GetKey(KeyCode.Space))
-            shooting.Shoot();
+        if(Input.GetKeyDown(KeyCode.S))
+           GameManager.Instance.hyperspace.Jump(_transform);
+        
+        movement.IsAccelerating = Input.GetKey(KeyCode.W);
+
+        movement.RotationDir =
+            Input.GetKey(KeyCode.A) ? PlayerMovement.RotationDirection.Left :
+            Input.GetKey(KeyCode.D) ? PlayerMovement.RotationDirection.Right :
+            PlayerMovement.RotationDirection.None;
+
+        if (Input.GetKey(KeyCode.Space) && !movement.IsAccelerating)
+            shooting.Shoot(_transform.rotation);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        GameManager.Instance.OnPlayerDestroyed();
+        gameObject.SetActive(false);
     }
 }

@@ -15,7 +15,8 @@ public class Shooting : MonoBehaviour
     private Transform _transform;
     private float _fireDelay;
     private float _fireTimer;
-    
+
+    public bool CanShoot => _fireTimer <= 0;
     private void Awake()
     {
         _transform = transform;
@@ -27,14 +28,14 @@ public class Shooting : MonoBehaviour
         _fireTimer -= Time.deltaTime;
     }
 
-    public void Shoot()
+    public void Shoot(Quaternion shootDirection)
     {
         if(_fireTimer > 0 )
             return;
 
         var spread = Random.Range(-spreading, spreading) / 2;
 
-        var eulerAngles = _transform.rotation.eulerAngles;
+        var eulerAngles = shootDirection.eulerAngles;
         eulerAngles.z += spread;
         
         var bullet = Instantiate(bulletPrefab, _transform.position, Quaternion.Euler(eulerAngles));
