@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Синглтон класс, ответственный за управление пулами
+/// </summary>
 public class PoolManager : MonoBehaviour
 {
     [SerializeField] private Pool[] startingPools;
@@ -27,11 +30,19 @@ public class PoolManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Получение объекта по имени obj из пула. Если нет нужного пула, то он создается.
+    /// </summary>
+    /// <param name="obj">Объект по имени которого берется объект из пула</param>
+    /// <returns>Объект пула</returns>
     public GameObject GetObject(GameObject obj)
     {
         return _pools.ContainsKey(obj.name) ? _pools[obj.name].GetEntity() : AddPool(obj).GetEntity();
     }
 
+    /// <summary>
+    /// Отключение всех объектов во всех пулах
+    /// </summary>
     public void DisableAllObjects()
     {
         foreach (var pool in _pools)
