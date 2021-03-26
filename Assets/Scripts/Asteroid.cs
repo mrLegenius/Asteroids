@@ -68,7 +68,7 @@ public class Asteroid : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         SpawnAsteroids();
-        gameObject.SetActive(false);
         GameManager.Instance.OnAsteroidDestroyed(score);
+        gameObject.SetActive(false);
     }
 }

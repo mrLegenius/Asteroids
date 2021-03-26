@@ -101,7 +101,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shooting: {fileID: 1294363955}
   movement: {fileID: 5585221224398835621}
-  hyperspace: {fileID: 7772180409062469622}
 --- !u!114 &1294363955
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,7 +113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76269277c30f08d4e8f0a2fa024caae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletPrefab: {fileID: 650472550153973073, guid: d91c27381f482e0459a1a13023ac93d6, type: 3}
+  bulletPrefab: {fileID: 650472550153973074, guid: d91c27381f482e0459a1a13023ac93d6, type: 3}
   fireRate: 5
   spreading: 0
 --- !u!60 &1294363951

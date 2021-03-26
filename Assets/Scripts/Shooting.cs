@@ -1,14 +1,8 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.SocialPlatforms;
-using Random = UnityEngine.Random;
 
 public class Shooting : MonoBehaviour
 {
-    [SerializeField] private Bullet bulletPrefab;
+    [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private float fireRate;
     [SerializeField] private float spreading;
 
@@ -37,9 +31,13 @@ public class Shooting : MonoBehaviour
 
         var eulerAngles = shootDirection.eulerAngles;
         eulerAngles.z += spread;
-        
-        var bullet = Instantiate(bulletPrefab, _transform.position, Quaternion.Euler(eulerAngles));
-        bullet.Init();
+
+        var bullet = PoolManager.Instance.GetObject(bulletPrefab);
+        var bulletTransform = bullet.transform;
+        bulletTransform.position = _transform.position;
+        bulletTransform.rotation = Quaternion.Euler(eulerAngles);
+        bullet.GetComponent<Bullet>().Init();
+        bullet.SetActive(true);
         
         _fireTimer = _fireDelay;
     }

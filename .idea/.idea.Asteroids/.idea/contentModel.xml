@@ -13,6 +13,10 @@
           <e p="GameManager.cs" t="Include" />
           <e p="Hyperspace.cs" t="Include" />
           <e p="Movement.cs" t="Include" />
+          <e p="Object Pooling" t="Include">
+            <e p="Pool.cs" t="Include" />
+            <e p="PoolManager.cs" t="Include" />
+          </e>
           <e p="Player.cs" t="Include" />
           <e p="PlayerMovement.cs" t="Include" />
           <e p="Shooting.cs" t="Include" />

@@ -179,7 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76269277c30f08d4e8f0a2fa024caae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletPrefab: {fileID: 4445541920195252634, guid: 299b4e5def15b524c88addf409edbfef, type: 3}
+  bulletPrefab: {fileID: 4445541920195252633, guid: 299b4e5def15b524c88addf409edbfef, type: 3}
   fireRate: 2
   spreading: 90
 --- !u!114 &-2080680066854140365

@@ -29,9 +29,13 @@ public class UFOSpawner : MonoBehaviour
         var y = Random.Range(-spawnOffset.y, Screen.height + spawnOffset.y);
         var position = _mainCamera.ScreenToWorldPoint(new Vector2(x, y));
         position.z = 0;
-        var ufo = Instantiate(prefab, position, Quaternion.identity);
+        var ufo = PoolManager.Instance.GetObject(prefab.gameObject);
 
-        ufo.StartMoving();
+        var ufoTransform = ufo.transform;
+        ufoTransform.position = position;
+
+        ufo.GetComponent<UFO>().StartMoving();
+        ufo.SetActive(true);
         
         StartCoroutine(Spawn());
     }

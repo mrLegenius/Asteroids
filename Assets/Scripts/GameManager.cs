@@ -12,12 +12,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AsteroidSpawner asteroidSpawner;
     [SerializeField] private UFOSpawner ufoSpawner;
     [SerializeField] private float playerSpawnDelay = 2;
+    [SerializeField] private int startPlayerShipsCount;
+    [SerializeField] private Player playerPrefab;
+    [SerializeField] private float gameOverScreenDuration = 2;
     
-    [SerializeField] private Player player;
-    
-    public Player Player => player;
-    private int playerShipsCount = 3;
-    private int asteroidsCount = 0;
+    public Player Player { get; private set; }
+
+    private int _playerShipsCount = 3;
+    private int _asteroidsCount = 0;
     private int _score = 0;
     private int _highScore = 0;
     
@@ -25,28 +27,44 @@ public class GameManager : MonoBehaviour
     {
         _highScore = PlayerPrefs.GetInt("HighScore");
         ui.SetHighScore(_highScore);
+        OpenMenu();
     }
 
     public void StartGame()
     {
-        player = Instantiate(player, Vector3.zero, Quaternion.identity);
-        ui.SetHealth(playerShipsCount);
+        _playerShipsCount = startPlayerShipsCount;
+        _asteroidsCount = 0;
+        _score = 0;
+        ui.SetScore(_score);
+        
+        PoolManager.Instance.DisableAllObjects();
+        if(!Player)
+            Player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+        else
+        {
+            var playerTransform = Player.transform;
+            playerTransform.position = Vector3.zero;
+            playerTransform.rotation = Quaternion.identity;
+            Player.gameObject.SetActive(true);
+        }
+        ui.SetHealth(_playerShipsCount);
         asteroidSpawner.StartSpawning();
         ufoSpawner.StartSpawning();
+        ui.OpenGameScreen();
     }
     
     private void RespawnPlayer()
     {
-        player.transform.position = Vector3.zero;
-        player.gameObject.SetActive(true);
+        Player.transform.position = Vector3.zero;
+        Player.gameObject.SetActive(true);
     }
     
     public void OnAsteroidDestroyed(int score = 0)
     {
-        asteroidsCount--;
+        _asteroidsCount--;
         _score += score;
         ui.SetScore(_score);
-        if(asteroidsCount <= 0)
+        if(_asteroidsCount <= 0)
             asteroidSpawner.StartSpawning();
     }
 
@@ -56,22 +74,36 @@ public class GameManager : MonoBehaviour
             return null;
         
         position.z = 0;
-            
-        var asteroid = Instantiate(prefab, position, rotation);
 
-        asteroidsCount++;
-        return asteroid;
+        var asteroid = PoolManager.Instance.GetObject(prefab.gameObject);
+        var asteroidTransform = asteroid.transform;
+        asteroidTransform.position = position;
+        asteroidTransform.rotation = rotation;
+        asteroid.SetActive(true);
+        _asteroidsCount++;
+        return asteroid.GetComponent<Asteroid>();
     }
 
     public void OnPlayerDestroyed()
     {
-        playerShipsCount--;
-        ui.SetHealth(playerShipsCount);
+        _playerShipsCount--;
+        ui.SetHealth(_playerShipsCount);
         
-        if(playerShipsCount > 0)
+        if(_playerShipsCount > 0)
             Invoke(nameof(RespawnPlayer), playerSpawnDelay);
         else
+        {
+            ui.OpenGameOverScreen();
             SaveScore();
+            Invoke(nameof(OpenMenu), gameOverScreenDuration);
+        }
+    }
+
+    public void OpenMenu()
+    {
+        ui.OpenMenuScreen();
+        PoolManager.Instance.DisableAllObjects();
+        asteroidSpawner.StartSpawning();
     }
 
     public void OnUFODestroyed(int score = 0)
@@ -80,15 +112,13 @@ public class GameManager : MonoBehaviour
         ui.SetScore(_score);
     }
 
-    void SaveScore()
+    private void SaveScore()
     {
-        if (_score > _highScore)
-        {
-            _highScore = _score;
-            ui.SetHighScore(_highScore);
-            PlayerPrefs.SetInt("HighScore", _score);
-        }
-            
+        if (_score <= _highScore) return;
+        
+        _highScore = _score;
+        ui.SetHighScore(_highScore);
+        PlayerPrefs.SetInt("HighScore", _score);
     }
     
     private void Awake()
@@ -98,6 +128,4 @@ public class GameManager : MonoBehaviour
         else
             Instance = this;
     }
-    
-    
 }

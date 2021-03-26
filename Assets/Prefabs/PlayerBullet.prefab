@@ -95,8 +95,9 @@ GameObject:
   - component: {fileID: 650472550153973073}
   - component: {fileID: -6771522941763483165}
   - component: {fileID: 2469041958262298017}
+  - component: {fileID: 6103965227148045965}
   m_Layer: 9
-  m_Name: Bullet
+  m_Name: PlayerBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -150,8 +151,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 427ef5907637215468d198ec38946bc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 20
   lifeTime: 2
+  movement: {fileID: 6103965227148045965}
 --- !u!114 &-6771522941763483165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,3 +193,16 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.125, y: 0.125}
   m_EdgeRadius: 0
+--- !u!114 &6103965227148045965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 650472550153973074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49530d5db6f5ef842b3785b507ec8516, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 20
