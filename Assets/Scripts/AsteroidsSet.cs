@@ -1,11 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Random = UnityEngine.Random;
 
-[CreateAssetMenu(menuName = "Asteroid")]
+[CreateAssetMenu(menuName = "Asteroids")]
 public class AsteroidsSet : ScriptableObject
 { 
     [SerializeField] private Asteroid[] bigAsteroids; 

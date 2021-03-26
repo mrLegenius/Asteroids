@@ -8,6 +8,7 @@
           <e p="Asteroid.cs" t="Include" />
           <e p="AsteroidSpawner.cs" t="Include" />
           <e p="AsteroidsSet.cs" t="Include" />
+          <e p="AudioManager.cs" t="Include" />
           <e p="BoundsController.cs" t="Include" />
           <e p="Bullet.cs" t="Include" />
           <e p="GameManager.cs" t="Include" />

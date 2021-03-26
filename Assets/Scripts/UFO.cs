@@ -1,7 +1,4 @@
-using System;
 using UnityEngine;
-using Random = UnityEngine.Random;
-
 public class UFO : MonoBehaviour
 {
     [SerializeField] private Shooting shooting;
@@ -9,7 +6,9 @@ public class UFO : MonoBehaviour
     
     [SerializeField] private float minSpeed, maxSpeed;
     [SerializeField] private int score;
-
+    [SerializeField] private ParticleSystem explosionParticles;
+    [SerializeField] private AudioClip explosionClip;
+    
     private Transform _transform;
 
     private void Awake()
@@ -33,13 +32,22 @@ public class UFO : MonoBehaviour
             
             var rotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: dir);
             
-            shooting.Shoot(rotation);
+            shooting.AttemptToShoot(rotation);
         }
     }
     
     private void OnTriggerEnter2D(Collider2D other)
     {
-        gameObject.SetActive(false);
         GameManager.Instance.OnUFODestroyed(score);
+        
+        var particlesGO = PoolManager.Instance.GetObject(explosionParticles.gameObject);
+        particlesGO.SetActive(true);
+        var particles = particlesGO.GetComponent<ParticleSystem>();
+        particles.transform.position = _transform.position;
+        particles.Play();
+        
+        AudioManager.Instance.PlayOneShot(explosionClip);
+        
+        gameObject.SetActive(false);
     }
 }

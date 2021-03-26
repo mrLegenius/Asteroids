@@ -22,10 +22,10 @@ public class Shooting : MonoBehaviour
         _fireTimer -= Time.deltaTime;
     }
 
-    public void Shoot(Quaternion shootDirection)
+    public bool AttemptToShoot(Quaternion shootDirection)
     {
         if(_fireTimer > 0 )
-            return;
+            return false;
 
         var spread = Random.Range(-spreading, spreading) / 2;
 
@@ -40,5 +40,7 @@ public class Shooting : MonoBehaviour
         bullet.SetActive(true);
         
         _fireTimer = _fireDelay;
+
+        return true;
     }
 }

@@ -1,5 +1,3 @@
-using System;
-using TMPro;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -7,6 +5,10 @@ public class Player : MonoBehaviour
     [SerializeField] private Shooting shooting;
     [SerializeField] private PlayerMovement movement;
     [SerializeField] private Thruster thruster;
+    [SerializeField] private AudioClip shotSound;
+    [SerializeField] private ParticleSystem explosionParticles;
+    [SerializeField] private AudioClip explosionClip;
+    [SerializeField] private AudioSource thrusterSound;
     private Transform _transform;
 
     private void Awake()
@@ -22,7 +24,12 @@ public class Player : MonoBehaviour
         movement.IsAccelerating = Input.GetKey(KeyCode.W);
 
         thruster.Thrust(movement.IsAccelerating);
-
+        if(movement.IsAccelerating && !thrusterSound.isPlaying)
+            thrusterSound.Play();
+        else
+        {
+            thrusterSound.Stop();
+        }
 
         movement.RotationDir =
             Input.GetKey(KeyCode.A) ? PlayerMovement.RotationDirection.Left :
@@ -30,12 +37,24 @@ public class Player : MonoBehaviour
             PlayerMovement.RotationDirection.None;
 
         if (Input.GetKey(KeyCode.Space) && !movement.IsAccelerating)
-            shooting.Shoot(_transform.rotation);
+            if (shooting.AttemptToShoot(_transform.rotation))
+            {
+                AudioManager.Instance.PlayOneShot(shotSound);
+            }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         GameManager.Instance.OnPlayerDestroyed();
+        
+        var particlesGO = PoolManager.Instance.GetObject(explosionParticles.gameObject);
+        particlesGO.SetActive(true);
+        var particles = particlesGO.GetComponent<ParticleSystem>();
+        particles.transform.position = _transform.position;
+        particles.Play();
+        
+        AudioManager.Instance.PlayOneShot(explosionClip);
+        
         gameObject.SetActive(false);
     }
 }

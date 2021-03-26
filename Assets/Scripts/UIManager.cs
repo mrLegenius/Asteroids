@@ -1,12 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] private TMPro.TMP_Text scoreText;
-    [SerializeField] private TMPro.TMP_Text highScoreText;
+    [SerializeField] private TMP_Text scoreText;
+    [SerializeField] private TMP_Text highScoreText;
     [SerializeField] private GameObject[] shipImages;
 
     [SerializeField] private GameObject gameOverScreen;

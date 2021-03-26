@@ -1,9 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class Asteroid : MonoBehaviour
 {
@@ -20,7 +15,9 @@ public class Asteroid : MonoBehaviour
     [SerializeField] private int score;
     [SerializeField] private Movement movement;
     [SerializeField] private Type asteroidType = Type.Big;
-
+    [SerializeField] private ParticleSystem explosionParticles;
+    [SerializeField] private AudioClip explosionClip;
+    
     private Transform _transform;
 
     private void Awake()
@@ -69,6 +66,14 @@ public class Asteroid : MonoBehaviour
     {
         SpawnAsteroids();
         GameManager.Instance.OnAsteroidDestroyed(score);
+        var particlesGO = PoolManager.Instance.GetObject(explosionParticles.gameObject);
+        particlesGO.SetActive(true);
+        var particles = particlesGO.GetComponent<ParticleSystem>();
+        particles.transform.position = _transform.position;
+        particles.Play();
+        
+        AudioManager.Instance.PlayOneShot(explosionClip);
+        
         gameObject.SetActive(false);
     }
 }
