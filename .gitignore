@@ -6,7 +6,7 @@
 [Ll]ogs/
 Assets/AssetStoreTools*
 
-# Visual Studio cache directory
+# Visual Studio and Rider cache directory
 .vs/
 .idea/
 

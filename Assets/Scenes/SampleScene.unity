@@ -1013,7 +1013,8 @@ MonoBehaviour:
   asteroidSpawner: {fileID: 1231423602}
   ufoSpawner: {fileID: 1231423604}
   playerSpawnDelay: 2
-  player: {fileID: 1294363953, guid: 50f6c9ac0242ad04094009e6b3ec9ed7, type: 3}
+  startPlayerShipsCount: 3
+  playerPrefab: {fileID: 1294363953, guid: 50f6c9ac0242ad04094009e6b3ec9ed7, type: 3}
   gameOverScreenDuration: 2
 --- !u!4 &1633439353
 Transform:

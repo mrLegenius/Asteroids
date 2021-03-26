@@ -20,6 +20,7 @@
           <e p="Player.cs" t="Include" />
           <e p="PlayerMovement.cs" t="Include" />
           <e p="Shooting.cs" t="Include" />
+          <e p="Thruster.cs" t="Include" />
           <e p="UFO.cs" t="Include" />
           <e p="UFOSpawner.cs" t="Include" />
           <e p="UIManager.cs" t="Include" />

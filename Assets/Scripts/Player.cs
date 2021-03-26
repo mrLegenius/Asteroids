@@ -6,7 +6,7 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private Shooting shooting;
     [SerializeField] private PlayerMovement movement;
-    
+    [SerializeField] private Thruster thruster;
     private Transform _transform;
 
     private void Awake()
@@ -20,6 +20,9 @@ public class Player : MonoBehaviour
            GameManager.Instance.hyperspace.Jump(_transform);
         
         movement.IsAccelerating = Input.GetKey(KeyCode.W);
+
+        thruster.Thrust(movement.IsAccelerating);
+
 
         movement.RotationDir =
             Input.GetKey(KeyCode.A) ? PlayerMovement.RotationDirection.Left :
