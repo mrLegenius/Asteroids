@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Движение с ускорением
+/// </summary>
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour
 {

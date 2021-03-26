@@ -27,6 +27,9 @@ public class GameManager : MonoBehaviour
         OpenMenu();
     }
 
+    /// <summary>
+    /// Начало новой игры: обнуление переменных, обновление интерфейса, отключение всех старых объектов
+    /// </summary>
     public void StartGame()
     {
         _playerShipsCount = startPlayerShipsCount;
@@ -45,7 +48,7 @@ public class GameManager : MonoBehaviour
             Player.gameObject.SetActive(true);
         }
         ui.SetHealth(_playerShipsCount);
-        asteroidSpawner.StartSpawning();
+        asteroidSpawner.Spawn();
         ufoSpawner.StartSpawning();
         ui.OpenGameScreen();
     }
@@ -56,15 +59,28 @@ public class GameManager : MonoBehaviour
         Player.gameObject.SetActive(true);
     }
     
+    /// <summary>
+    /// Уменьшает счетчик астероид и прибавляет очки
+    /// При уничтожении всех астероидов создаются новые
+    /// </summary>
+    /// <param name="score"></param>
     public void OnAsteroidDestroyed(int score = 0)
     {
         _asteroidsCount--;
         _score += score;
         ui.SetScore(_score);
         if(_asteroidsCount <= 0)
-            asteroidSpawner.StartSpawning();
+            asteroidSpawner.Spawn();
     }
 
+    /// <summary>
+    /// Берет астероид из пула.
+    /// Прибавляет счетчик астероидов.
+    /// </summary>
+    /// <param name="prefab">Объект для создания</param>
+    /// <param name="position">Новое положение объекта</param>
+    /// <param name="rotation">Новый поворот объекта</param>
+    /// <returns></returns>
     public Asteroid CreateAsteroid(Asteroid prefab, Vector3 position, Quaternion rotation)
     {
         if(!prefab)
@@ -81,6 +97,11 @@ public class GameManager : MonoBehaviour
         return asteroid.GetComponent<Asteroid>();
     }
 
+    /// <summary>
+    /// Убавляет количество оставшихся жизней у игрока.
+    /// Обновляет интерфейс
+    /// При достижении нуля жизней, открывает панель конца игры
+    /// </summary>
     public void OnPlayerDestroyed()
     {
         _playerShipsCount--;
@@ -96,13 +117,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Открывает панель меню
+    /// </summary>
     public void OpenMenu()
     {
         ui.OpenMenuScreen();
         PoolManager.Instance.DisableAllObjects();
-        asteroidSpawner.StartSpawning();
+        asteroidSpawner.Spawn();
     }
 
+    /// <summary>
+    /// Добавляет очки за уничтожение летающей тарелки
+    /// </summary>
+    /// <param name="score"></param>
     public void OnUFODestroyed(int score = 0)
     {
         _score += score;

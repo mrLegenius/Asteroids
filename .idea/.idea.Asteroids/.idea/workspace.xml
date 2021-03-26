@@ -29,9 +29,9 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Assets/Scripts/Movement.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Pool.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Shooting.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Object Pooling/Pool.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Object Pooling/PoolManager.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Asteroid.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/AsteroidSpawner.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/AsteroidsSet.cs" />
@@ -40,14 +40,14 @@
         <option value="$PROJECT_DIR$/Assets/Scripts/Bullet.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/GameManager.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Hyperspace.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Movement.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Player.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/PlayerMovement.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Shooting.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Thruster.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/UFO.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/UFOSpawner.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/UIManager.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Object Pooling/Pool.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Object Pooling/PoolManager.cs" />
       </list>
     </option>
   </component>
@@ -87,9 +87,9 @@
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1616746328379">
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1616773803203">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1616746328379" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1616773803203" />
   </component>
 </project>

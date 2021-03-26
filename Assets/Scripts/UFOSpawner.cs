@@ -15,11 +15,18 @@ public class UFOSpawner : MonoBehaviour
         _mainCamera = Camera.main;
     }
 
+    /// <summary>
+    /// Включение создания НЛО.
+    /// </summary>
     public void StartSpawning()
     {
         StartCoroutine(Spawn());
     }
 
+    /// <summary>
+    /// Переодически создает НЛО.
+    /// Время нового появления выбирается слуйчано в диапазоне (minSpawnTime, maxSpawnTime)
+    /// </summary>
     private IEnumerator Spawn()
     {
         yield return new WaitForSeconds(Random.Range(minSpawnTime, maxSpawnTime));

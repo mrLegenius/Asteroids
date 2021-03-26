@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Обработка коллизий, отключение объекта при достижении максимального времени жизни
+/// </summary>
 public class Bullet : MonoBehaviour
 {
     [SerializeField] private float lifeTime;
@@ -11,7 +14,10 @@ public class Bullet : MonoBehaviour
     {
         _transform = transform;
     }
-
+    
+    /// <summary>
+    /// Обновление времени жизни и направления движения в сторону поворота
+    /// </summary>
     public void Init()
     {
         _lifeTimeTimer = lifeTime;

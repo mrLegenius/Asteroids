@@ -22,6 +22,11 @@ public class Shooting : MonoBehaviour
         _fireTimer -= Time.deltaTime;
     }
 
+    /// <summary>
+    /// Стреляет когда прошел кулдаун выстрела.
+    /// </summary>
+    /// <param name="shootDirection">Направление выстрела</param>
+    /// <returns>Произошел ли выстрел</returns>
     public bool AttemptToShoot(Quaternion shootDirection)
     {
         if(_fireTimer > 0 )

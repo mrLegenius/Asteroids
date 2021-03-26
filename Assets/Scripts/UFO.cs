@@ -15,7 +15,9 @@ public class UFO : MonoBehaviour
     {
         _transform = transform;
     }
-
+    /// <summary>
+    /// Заставляет НЛО двигаться в случайном направлении со случайной скоростью в интервале (minSpeed, maxSpeed)
+    /// </summary>
     public void StartMoving()
     {
         movement.SetRandomDirection();
@@ -40,12 +42,14 @@ public class UFO : MonoBehaviour
     {
         GameManager.Instance.OnUFODestroyed(score);
         
+        //Активирует частицы взрыва
         var particlesGO = PoolManager.Instance.GetObject(explosionParticles.gameObject);
         particlesGO.SetActive(true);
         var particles = particlesGO.GetComponent<ParticleSystem>();
         particles.transform.position = _transform.position;
         particles.Play();
         
+        //Активирует звук взрыва
         AudioManager.Instance.PlayOneShot(explosionClip);
         
         gameObject.SetActive(false);

@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Обработка пользовательского ввода и управление функциями корабля игрока
+/// </summary>
 public class Player : MonoBehaviour
 {
     [SerializeField] private Shooting shooting;
@@ -15,7 +18,7 @@ public class Player : MonoBehaviour
     {
         _transform = transform;
     }
-
+    
     private void Update()
     {
         if(Input.GetKeyDown(KeyCode.S))
@@ -47,12 +50,14 @@ public class Player : MonoBehaviour
     {
         GameManager.Instance.OnPlayerDestroyed();
         
+        //Активация частиц взрыва
         var particlesGO = PoolManager.Instance.GetObject(explosionParticles.gameObject);
         particlesGO.SetActive(true);
         var particles = particlesGO.GetComponent<ParticleSystem>();
         particles.transform.position = _transform.position;
         particles.Play();
         
+        //Активация звука взрыва
         AudioManager.Instance.PlayOneShot(explosionClip);
         
         gameObject.SetActive(false);

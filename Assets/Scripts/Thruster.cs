@@ -12,6 +12,10 @@ public class Thruster : MonoBehaviour
         _sprite = GetComponent<SpriteRenderer>();
     }
 
+    /// <summary>
+    /// Переключение эффекта трастера
+    /// </summary>
+    /// <param name="isThrusting">Включить ли трастер</param>
     public void Thrust(bool isThrusting)
     {
         if (!isThrusting)

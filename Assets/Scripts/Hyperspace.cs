@@ -17,12 +17,21 @@ public class Hyperspace : MonoBehaviour
         _transform = transform;
     }
 
+    /// <summary>
+    /// Отправляет игрока в гиперпространство
+    /// </summary>
+    /// <param name="player"></param>
     public void Jump(Transform player)
     {
         if (!_isJumping)
             StartCoroutine(JumpToHyperSpace(player));
     }
 
+    /// <summary>
+    /// Отключает объект игрока и через jumpDelay секунд включает его обратно с изменением его позиции в случайную точку.
+    /// </summary>
+    /// <param name="player"></param>
+    /// <returns></returns>
     private IEnumerator JumpToHyperSpace(Transform player)
     {
         player.gameObject.SetActive(false);
@@ -35,6 +44,10 @@ public class Hyperspace : MonoBehaviour
         _isJumping = false;
     }
 
+    /// <summary>
+    /// Получает новую точку в рамках экрана
+    /// </summary>
+    /// <returns></returns>
     private Vector3 GetRandomPosition()
     {
         var screenPosX = Random.Range(Screen.width * screenOffset.x, Screen.width * (1f - screenOffset.x));

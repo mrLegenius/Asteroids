@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 public class AsteroidSpawner : MonoBehaviour
 {
     [SerializeField] private AsteroidsSet set;
@@ -15,13 +16,10 @@ public class AsteroidSpawner : MonoBehaviour
         _mainCamera = Camera.main;
     }
 
-    public void StartSpawning()
-    {
-        Spawn();
-        _level++;
-    }
-
-    private void Spawn()
+    /// <summary>
+    /// Создает startAsteroidsCount+_level больших астероидов. _level увеличивается на единицу за каждый вызов.
+    /// </summary>
+    public void Spawn()
     {
         for(int i = 0; i < startAsteroidsCount + _level; i++)
         {
@@ -35,5 +33,6 @@ public class AsteroidSpawner : MonoBehaviour
             asteroid.Set = set;
             asteroid.StartMoving();
         }
+        _level++;
     }
 }
