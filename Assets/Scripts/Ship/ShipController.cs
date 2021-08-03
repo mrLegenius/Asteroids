@@ -49,7 +49,7 @@ namespace Asteroids.Ship
         
             RotateShip(input, movement);
             CalculateVelocity(input, movement);
-            _shipModel.Coord += movement.Velocity * Time.deltaTime;
+            _shipModel.Position += movement.Velocity * Time.deltaTime;
             Repaint();
         }
         private void RotateShip(Vector2 input, Movement movement)
@@ -94,7 +94,7 @@ namespace Asteroids.Ship
 
             if (!shooting.CanShoot || !shootCommanded) return;
 
-        _bulletsController.CreateBullet(_shipModel.Coord, 
+        _bulletsController.CreateBullet(_shipModel.Position, 
                 _shipModel.Angle, 
                 shooting.BulletPrefab);
             

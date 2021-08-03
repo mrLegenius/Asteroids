@@ -53,7 +53,7 @@ public class LaserFiring
 }
 public class ShipModel
 {
-    public Vector2 Coord { get; set; }
+    public Vector2 Position { get; set; }
     public float Angle { get; set; }
     public Movement Movement { get; set; }
     public Shooting Shooting { get; set; }

@@ -68,7 +68,7 @@ public class ShipView : MonoBehaviour
     
     public void Repaint(ShipModel model)
     {
-        _transform.position = model.Coord;
+        _transform.position = model.Position;
 
         var rotation = _transform.rotation;
         rotation.eulerAngles = new Vector3(0, 0, model.Angle);

@@ -23,7 +23,7 @@ public class GameplayView : MonoBehaviour
 
     public void Repaint(ShipModel ship)
     {
-        _coordsText.SetText($"Coord: ({ship.Coord.x}, {ship.Coord.y})");
+        _coordsText.SetText($"Coord: ({ship.Position.x}, {ship.Position.y})");
         _angleText.SetText($"Angle: {ship.Angle}");
         _speedText.SetText($"Speed: {ship.Movement.Speed}");
         _lasersText.SetText($"Lasers: {ship.LaserFiring.LaserCount}");

@@ -10,6 +10,13 @@ public class GameplayInstaller : MonoInstaller
 {
     public override void InstallBindings()
     {
+        SignalBusInstaller.Install(Container);
+        BindControllers();
+        BindSignals();
+    }
+
+    private void BindControllers()
+    {
         Container.BindInterfacesAndSelfTo<MenuController>()
             .AsSingle()
             .NonLazy();
@@ -33,6 +40,16 @@ public class GameplayInstaller : MonoInstaller
         Container.BindInterfacesAndSelfTo<AsteroidsController>()
             .AsSingle()
             .NonLazy();
+        
+        Container.BindInterfacesAndSelfTo<AsteroidSpawnController>()
+            .AsSingle()
+            .NonLazy();
+    }
+
+    private void BindSignals()
+    {
+        Container.DeclareSignal<GameStartedSignal>();
+        Container.DeclareSignal<DestroyedAllAsteroidsSignal>();
     }
 }
 }

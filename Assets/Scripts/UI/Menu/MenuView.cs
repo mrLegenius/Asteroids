@@ -26,5 +26,14 @@ public class MenuView : MonoBehaviour
         _lastScoreText.SetText($"Score: {lastScore}");
         _highScoreText.SetText($"High Score: {highScore}");
     }
+
+    public void Show()
+    {
+        gameObject.SetActive(true);
+    }
+    public void Hide()
+    {
+        gameObject.SetActive(false);
+    }
 }
 }

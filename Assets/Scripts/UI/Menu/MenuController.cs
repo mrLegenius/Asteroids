@@ -8,9 +8,12 @@ public class MenuController : IInitializable, IDisposable
 {
     private readonly MenuView _menuView;
 
-    public MenuController(MenuView menuView)
+    private SignalBus _signalBus;
+    public MenuController(MenuView menuView, SignalBus signalBus)
     {
         _menuView = menuView;
+        _signalBus = signalBus;
+        
         Init();
     }
 
@@ -18,11 +21,15 @@ public class MenuController : IInitializable, IDisposable
 
     public void Dispose() { }
 
-    public void Init() { _menuView.OnStartGameButtonClicked(StartGame); }
+    public void Init()
+    {
+        _menuView.OnStartGameButtonClicked(StartGame);
+    }
 
     public void StartGame()
     {
-        //Fire signal start Game
+        _signalBus.Fire<GameStartedSignal>();
+        _menuView.Hide();
     }
 
     public void RepaintView()

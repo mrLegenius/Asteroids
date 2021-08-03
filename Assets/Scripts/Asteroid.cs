@@ -12,7 +12,7 @@ public class Asteroid : MonoBehaviour
         Small
     }
 
-    public AsteroidsSet Set { get; set; }
+   // public AsteroidsSet Set { get; set; }
     [SerializeField] private float minSpeed, maxSpeed;
     [SerializeField] private float asteroidSpawnSpread;
     [SerializeField] private int score;
@@ -57,7 +57,7 @@ public class Asteroid : MonoBehaviour
             if(!asteroid)
                 continue;
             
-            asteroid.Set = Set;
+            //asteroid.Set = Set;
             asteroid.StartMoving();
         }
     }
@@ -89,8 +89,8 @@ public class Asteroid : MonoBehaviour
     {
         return asteroidType switch
         {
-            Type.Big => Set.GetAsteroid(Type.Medium),
-            Type.Medium => Set.GetAsteroid(Type.Small),
+            //Type.Big => Set.GetAsteroid(Type.Medium),
+            //Type.Medium => Set.GetAsteroid(Type.Small),
             _ => null
         };
     }
