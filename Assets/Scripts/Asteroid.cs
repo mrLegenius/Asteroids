@@ -29,7 +29,7 @@ public class Asteroid : MonoBehaviour
     }
 
     /// <summary>
-    /// Заставляет астероид двигаться в рандомной направлении с рандомной скоростью в интервале (minSpeed, maxSpeed)
+    /// Заставляет астероид двигаться в рандомном направлении с рандомной скоростью в интервале (minSpeed, maxSpeed)
     /// </summary>
     public void StartMoving()
     {
