@@ -1,104 +1,115 @@
 using Asteroids.Models;
+using Asteroids.Ship.Bullet;
 using Asteroids.Views;
 using UnityEngine;
 
-public class ShipController
+namespace Asteroids.Ship
 {
-    private readonly ShipView _shipView;
-    private ShipModel _shipModel;
-    
-    public ShipController(ShipView shipView)
+    public class ShipController
     {
-        _shipView = shipView;
+        private readonly ShipView _shipView;
+        private readonly ShipModel _shipModel;
+
+        private readonly BulletsController _bulletsController;
         
-        Init();
-        _shipModel = new ShipModel
+        public ShipController(ShipView shipView, 
+            BulletsController bulletsController)
         {
-            Movement = new Asteroids.Models.Movement
+            _shipView = shipView;
+            _bulletsController = bulletsController;
+        
+            Init();
+            _shipModel = new ShipModel
             {
-                MaxSpeed = 10,
-                Acceleration = 20,
-                Deceleration = 10,
-                RotationSpeed = 180
+                Movement = new Movement
+                {
+                    MaxSpeed = 10,
+                    Acceleration = 20,
+                    Deceleration = 10,
+                    RotationSpeed = 180
+                },
+                Shooting = new Shooting
+                {
+                    BulletPrefab = Resources.Load<BulletView>("Bullet"),
+                    FireRate = 10
+                }
+            };
+        }
+
+        public void Init()
+        {
+            _shipView
+                .OnMoved(HandleMove)
+                .OnShoot(HandleShoot)
+                .OnLaserFired(HandleLaserFired);
+        }
+        private void HandleMove(Vector2 input)
+        {
+            var movement = _shipModel.Movement;
+        
+            RotateShip(input, movement);
+            CalculateVelocity(input, movement);
+            _shipModel.Coord += movement.Velocity * Time.deltaTime;
+            Repaint();
+        }
+        private void RotateShip(Vector2 input, Movement movement)
+        {
+            var rotationSpeed = movement.RotationSpeed * Time.deltaTime;
+
+            if (input.x > float.Epsilon)
+            {
+                _shipModel.Angle -= rotationSpeed;
             }
-        };
-    }
 
-    public void Init()
-    {
-        _shipView
-            .OnMoved(HandleMove)
-            .OnShoot(HandleShoot)
-            .OnLaserFired(HandleLaserFired);
-    }
-    
-
-    public void HandleMove(Vector2 input)
-    {
-        var movement = _shipModel.Movement;
-        
-        RotateShip(input, movement);
-        CalculateVelocity(input, movement);
-        _shipModel.Coord += movement.Velocity * Time.deltaTime;
-        Repaint();
-    }
-
-    private void CalculateVelocity(Vector2 input, Asteroids.Models.Movement movement)
-    {
-        var moveDirection = GetMoveDirection();
-
-        if (input.y > float.Epsilon)
-        {
-            movement.Velocity +=
-                movement.Acceleration * Time.deltaTime * moveDirection;
+            if (input.x < -float.Epsilon)
+            {
+                _shipModel.Angle += rotationSpeed;
+            }
         }
-        else
+        private void CalculateVelocity(Vector2 input, Movement movement)
         {
-            movement.Velocity =
-                Vector2.MoveTowards(movement.Velocity,
-                    Vector2.zero,
-                    movement.Deceleration * Time.deltaTime);
+            var angle = _shipModel.Angle * Mathf.Deg2Rad;
+            var moveDirection = Utilities.GetDirectionFromAngle(angle);
+
+            if (input.y > float.Epsilon)
+            {
+                movement.Velocity +=
+                    movement.Acceleration * Time.deltaTime * moveDirection;
+            }
+            else
+            {
+                movement.Velocity =
+                    Vector2.MoveTowards(movement.Velocity,
+                        Vector2.zero,
+                        movement.Deceleration * Time.deltaTime);
+            }
+
+            Vector2.ClampMagnitude(movement.Velocity, movement.MaxSpeed);
         }
 
-        Vector2.ClampMagnitude(movement.Velocity, movement.MaxSpeed);
-    }
-
-    private Vector2 GetMoveDirection()
-    {
-        var x = Mathf.Cos(_shipModel.Angle * Mathf.Deg2Rad);
-        var y = Mathf.Sin(_shipModel.Angle * Mathf.Deg2Rad);
-        
-        return new Vector2(x, y);
-    }
-
-    private void RotateShip(Vector2 input, Asteroids.Models.Movement movement)
-    {
-        var rotationSpeed = movement.RotationSpeed * Time.deltaTime;
-
-        if (input.x > float.Epsilon)
+        private void HandleShoot(bool shootCommanded)
         {
-            _shipModel.Angle -= rotationSpeed;
+            var shooting = _shipModel.Shooting;
+            shooting.FireTimer -= Time.deltaTime;
+
+            if (!shooting.CanShoot || !shootCommanded) return;
+
+        _bulletsController.CreateBullet(_shipModel.Coord, 
+                _shipModel.Angle, 
+                shooting.BulletPrefab);
+            
+            shooting.FireTimer = shooting.FireDelay;
         }
 
-        if (input.x < -float.Epsilon)
+        private void HandleLaserFired()
         {
-            _shipModel.Angle += rotationSpeed;
+            //TODO: add laser firing
+            Debug.Log("Fire Laser");
         }
-    }
 
-    public void HandleShoot(bool value)
-    {
-        //TODO: add shooting
-    }
-
-    public void HandleLaserFired()
-    {
-        //TODO: add laser firing
-        Debug.Log("Fire Laser");
-    }
-    
-    public void Repaint()
-    {
-        _shipView.Repaint(_shipModel);
+        private void Repaint()
+        {
+            _shipView.Repaint(_shipModel);
+        }
     }
 }

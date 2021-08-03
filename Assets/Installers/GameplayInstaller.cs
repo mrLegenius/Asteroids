@@ -1,4 +1,7 @@
+using Asteroids.Asteroid;
 using Asteroids.Controllers;
+using Asteroids.Ship;
+using Asteroids.Ship.Bullet;
 using Zenject;
 
 namespace Asteroids
@@ -20,6 +23,14 @@ public class GameplayInstaller : MonoInstaller
             .NonLazy();
         
         Container.BindInterfacesAndSelfTo<ShipController>()
+            .AsSingle()
+            .NonLazy();
+        
+        Container.BindInterfacesAndSelfTo<BulletsController>()
+            .AsSingle()
+            .NonLazy();
+        
+        Container.BindInterfacesAndSelfTo<AsteroidsController>()
             .AsSingle()
             .NonLazy();
     }

@@ -19,7 +19,9 @@ public class ShipView : MonoBehaviour
     private InputAction _laserAction;
     
     private Action<Vector2> _moved;
+    
     private Action<bool> _shoot;
+    
     private void Awake()
     {
         _transform = transform;
@@ -42,7 +44,7 @@ public class ShipView : MonoBehaviour
     public void Update()
     {
         _moved?.Invoke(_moveAction.ReadValue<Vector2>());
-        _shoot?.Invoke(_fireAction.ReadValue<bool>());
+        _shoot?.Invoke(_fireAction.ReadValue<float>() > 0.5f);
     }
 
     public ShipView OnMoved(Action<Vector2> callback)
@@ -56,8 +58,8 @@ public class ShipView : MonoBehaviour
         return this;
     }
     public ShipView OnLaserFired(Action callback)
-    {
-       _fireAction.performed += context =>
+    { 
+        _fireAction.performed += context =>
         {
             callback.Invoke();
         };

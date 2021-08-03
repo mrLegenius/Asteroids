@@ -283,6 +283,10 @@ PrefabInstance:
       propertyPath: _playerInput
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 3621719448533809575, guid: 50f6c9ac0242ad04094009e6b3ec9ed7, type: 3}
+      propertyPath: _fireAction.m_Type
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5585221224398835620, guid: 50f6c9ac0242ad04094009e6b3ec9ed7, type: 3}
       propertyPath: m_Name
       value: Ship

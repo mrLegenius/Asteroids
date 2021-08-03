@@ -7,27 +7,27 @@ namespace Asteroids.Views
 public class GameplayView : MonoBehaviour
 {
     [SerializeField]
-    private TMP_Text _coords;
+    private TMP_Text _coordsText;
 
     [SerializeField]
-    private TMP_Text _angle;
+    private TMP_Text _angleText;
 
     [SerializeField]
-    private TMP_Text _speed;
+    private TMP_Text _speedText;
 
     [SerializeField]
-    private TMP_Text _lasers;
+    private TMP_Text _lasersText;
 
     [SerializeField]
-    private TMP_Text _cooldown;
+    private TMP_Text _cooldownText;
 
     public void Repaint(ShipModel ship)
     {
-        _coords.SetText($"Coord: ({ship.Coord.x}, {ship.Coord.y})");
-        _angle.SetText($"Angle: {ship.Angle}");
-        _speed.SetText($"Speed: {ship.Movement.Speed}");
-        _lasers.SetText($"Lasers: {ship.LaserCount}");
-        _cooldown.SetText($"Laser Cooldown: {ship.LaserCooldown}");
+        _coordsText.SetText($"Coord: ({ship.Coord.x}, {ship.Coord.y})");
+        _angleText.SetText($"Angle: {ship.Angle}");
+        _speedText.SetText($"Speed: {ship.Movement.Speed}");
+        _lasersText.SetText($"Lasers: {ship.LaserFiring.LaserCount}");
+        _cooldownText.SetText($"Laser Cooldown: {ship.LaserFiring.LaserCurrentCooldown}");
     }
 }
 }
