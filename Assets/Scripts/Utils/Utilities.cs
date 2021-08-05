@@ -20,8 +20,7 @@ public static class Utilities
     private static Camera _mainCamera;
     public static Camera GetMainCamera()
     {
-        if(!_mainCamera)
-            _mainCamera = Camera.main;
+        _mainCamera ??= Camera.main;
 
         return _mainCamera;
     }
@@ -42,7 +41,7 @@ public static class Utilities
     {
         var offset = new Vector2(0.1f, 0.1f);
         var beyondScreenSpace = new Vector2(50, 50);
-        var screenPos = _mainCamera.WorldToScreenPoint(currentPosition);
+        var screenPos = GetMainCamera().WorldToScreenPoint(currentPosition);
         
         if (screenPos.x < -beyondScreenSpace.x)
             currentPosition.x = -currentPosition.x - offset.x;

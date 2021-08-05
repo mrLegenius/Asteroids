@@ -22,6 +22,7 @@ public class AsteroidModel
     
     
     public float AsteroidSpawnSpread { get; set; }
+    public float AsteroidSplitCount { get; set; }
     
     public int ScoreOnDestroyed => CalculateScore();
     public AsteroidType Type { get; set; }

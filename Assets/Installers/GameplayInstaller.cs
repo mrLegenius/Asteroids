@@ -1,7 +1,9 @@
 using Asteroids.Asteroid;
 using Asteroids.Controllers;
+using Asteroids.Models;
 using Asteroids.Ship;
 using Asteroids.Ship.Bullet;
+using UnityEngine;
 using Zenject;
 
 namespace Asteroids
@@ -13,6 +15,28 @@ public class GameplayInstaller : MonoInstaller
         SignalBusInstaller.Install(Container);
         BindControllers();
         BindSignals();
+        
+        Container.Bind<ShipModel>().FromMethod(CreateShipModel).AsSingle().NonLazy();
+    }
+
+    private static ShipModel CreateShipModel(InjectContext ctx)
+    {
+        return new ShipModel
+        {
+            Movement = new Models.Movement
+            {
+                MaxSpeed = 10,
+                Acceleration = 20,
+                Deceleration = 10,
+                RotationSpeed = 180
+            },
+            Shooting = new Models.Shooting
+            {
+                BulletPrefab = Resources.Load<BulletView>("Bullet"),
+                FireRate = 10
+            },
+            LaserFiring = new LaserFiring()
+        };
     }
 
     private void BindControllers()

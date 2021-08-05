@@ -1,9 +1,6 @@
-public struct GameStartedSignal
+namespace Asteroids
 {
-    
-}
+public struct GameStartedSignal { }
 
-public struct DestroyedAllAsteroidsSignal
-{
-    
+public struct DestroyedAllAsteroidsSignal { }
 }

@@ -7,11 +7,12 @@ namespace Asteroids.Asteroid
 {
 public class AsteroidSpawnController : IInitializable, IDisposable
 {
-    private readonly AsteroidsController _asteroidsController;
-
     private float _spawnTimer;
+    private int _level;
+    private const int INITIAL_SPAWN_COUNT = 5;
 
-    private SignalBus _signalBus;
+    private readonly AsteroidsController _asteroidsController;
+    private readonly SignalBus _signalBus;
     public AsteroidSpawnController(
         AsteroidsController asteroidsController,
         SignalBus signalBus)
@@ -42,7 +43,7 @@ public class AsteroidSpawnController : IInitializable, IDisposable
 
     public void OnAllAsteroidsWereDestroyed(DestroyedAllAsteroidsSignal signal)
     {
-        SpawnAsteroids(5);
+        SpawnAsteroids(INITIAL_SPAWN_COUNT + _level++);
     }
 }
 }

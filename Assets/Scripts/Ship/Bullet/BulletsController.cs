@@ -57,6 +57,8 @@ public class BulletsController : ITickable
                 LifeTimer = 2
             };
             
+            bulletView.OnCollided(OnBulletCollided);
+            
             _bullets.Add(new PooledBullet
             {
                 View = bulletView,
@@ -72,7 +74,9 @@ public class BulletsController : ITickable
         {
             var model = bullet.Model;
             var view = bullet.View;
-            
+
+            model.Position =
+                Utilities.GetWrapAroundPosition(model.Position);
             MoveBullet(model);
             RepaintView(view, model);
 
@@ -103,6 +107,12 @@ public class BulletsController : ITickable
     {
         bullet.IsActive = false;
         bullet.View.gameObject.SetActive(false);
+    }
+    
+    private void OnBulletCollided(Collider2D other, BulletView view)
+    {
+        var bullet = _bullets.First(x => x.View == view);
+        DisableBullet(bullet);
     }
 }
 }

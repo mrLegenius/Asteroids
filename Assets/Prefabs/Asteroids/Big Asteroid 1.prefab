@@ -9,11 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4713653179794254746}
-  - component: {fileID: 4713653179794254747}
   - component: {fileID: 4713653179794254744}
   - component: {fileID: 4713653179794254741}
-  - component: {fileID: -4722446333393644492}
-  - component: {fileID: 6988581641679917266}
   - component: {fileID: -2998327437503974910}
   - component: {fileID: 6993517724922875098}
   m_Layer: 6
@@ -38,26 +35,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4713653179794254747
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4713653179794254745}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd5606361aa7d7c4f9f4ade55fd9e7b3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minSpeed: 2
-  maxSpeed: 5
-  asteroidSpawnSpread: 0
-  score: 20
-  movement: {fileID: -4722446333393644492}
-  asteroidType: 0
-  explosionParticles: {fileID: 1583003238860792984, guid: cf8f9eb48dd8b1244a10c4f47c1a6b54, type: 3}
-  explosionClip: {fileID: 8300000, guid: b31a73f46a9fff1448df23bc1c3bf576, type: 3}
 --- !u!50 &4713653179794254744
 Rigidbody2D:
   serializedVersion: 4
@@ -95,33 +72,6 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.4
---- !u!114 &-4722446333393644492
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4713653179794254745}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 49530d5db6f5ef842b3785b507ec8516, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 3
---- !u!114 &6988581641679917266
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4713653179794254745}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7896decabf99984784d751b6d536754, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: 0.1, y: 0.1}
-  beyondScreenSpace: {x: 50, y: 50}
 --- !u!82 &-2998327437503974910
 AudioSource:
   m_ObjectHideFlags: 0

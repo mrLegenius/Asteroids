@@ -337,9 +337,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5585221224398835621, guid: 50f6c9ac0242ad04094009e6b3ec9ed7, type: 3}
-    - {fileID: 1451692569147474909, guid: 50f6c9ac0242ad04094009e6b3ec9ed7, type: 3}
     - {fileID: 1294363953, guid: 50f6c9ac0242ad04094009e6b3ec9ed7, type: 3}
     - {fileID: 1294363955, guid: 50f6c9ac0242ad04094009e6b3ec9ed7, type: 3}
+    - {fileID: 1451692569147474909, guid: 50f6c9ac0242ad04094009e6b3ec9ed7, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 50f6c9ac0242ad04094009e6b3ec9ed7, type: 3}
 --- !u!1 &291762978
 GameObject:
@@ -1804,11 +1804,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 719bf91ece5a67043ac0f2559baad4b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _coordsText: {fileID: 0}
-  _angleText: {fileID: 0}
-  _speedText: {fileID: 0}
-  _lasersText: {fileID: 0}
-  _cooldownText: {fileID: 0}
+  _coordsText: {fileID: 1379829553}
+  _angleText: {fileID: 1202317548}
+  _speedText: {fileID: 549529509}
+  _lasersText: {fileID: 1719850444}
+  _cooldownText: {fileID: 26082646}
 --- !u!1 &1288713628
 GameObject:
   m_ObjectHideFlags: 0

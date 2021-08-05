@@ -12,28 +12,14 @@ namespace Asteroids.Ship
 
         private readonly BulletsController _bulletsController;
         
-        public ShipController(ShipView shipView, 
+        public ShipController(ShipModel model, ShipView shipView, 
             BulletsController bulletsController)
         {
             _shipView = shipView;
             _bulletsController = bulletsController;
         
             Init();
-            _shipModel = new ShipModel
-            {
-                Movement = new Movement
-                {
-                    MaxSpeed = 10,
-                    Acceleration = 20,
-                    Deceleration = 10,
-                    RotationSpeed = 180
-                },
-                Shooting = new Shooting
-                {
-                    BulletPrefab = Resources.Load<BulletView>("Bullet"),
-                    FireRate = 10
-                }
-            };
+            _shipModel = model;
         }
 
         public void Init()
@@ -50,6 +36,8 @@ namespace Asteroids.Ship
             RotateShip(input, movement);
             CalculateVelocity(input, movement);
             _shipModel.Position += movement.Velocity * Time.deltaTime;
+            _shipModel.Position =
+                Utilities.GetWrapAroundPosition(_shipModel.Position);
             Repaint();
         }
         private void RotateShip(Vector2 input, Movement movement)
@@ -65,6 +53,9 @@ namespace Asteroids.Ship
             {
                 _shipModel.Angle += rotationSpeed;
             }
+
+            if (_shipModel.Angle > 180) _shipModel.Angle = -180;
+            if (_shipModel.Angle < -180) _shipModel.Angle = 180;
         }
         private void CalculateVelocity(Vector2 input, Movement movement)
         {

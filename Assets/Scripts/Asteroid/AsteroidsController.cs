@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using Zenject;
 using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace Asteroids.Asteroid
 {
@@ -93,19 +94,25 @@ public class AsteroidsController : ITickable, IInitializable, IDisposable
 
             var model = new AsteroidModel
             {
+                Type = type,
                 Position = position,
                 Angle = angle,
                 MinSpeed = 10,
-                MaxSpeed = 20
+                MaxSpeed = 20,
+                AsteroidSplitCount = 2,
+                AsteroidSpawnSpread = 90
             };
             model.Speed = model.GetRandomSpeed();
-            
-            _asteroids.Add(new PooledAsteroid
+
+            var asteroid = new PooledAsteroid
             {
                 View = view,
                 Model = model,
                 IsActive = true
-            });
+            };
+            
+            asteroid.View.OnCollided(OnAsteroidCollided);
+            _asteroids.Add(asteroid);
         }
     }
 
@@ -147,6 +154,35 @@ public class AsteroidsController : ITickable, IInitializable, IDisposable
     private void OnGameStarted(GameStartedSignal signal)
     {
         _isGameStarted = true;
+    }
+
+    private void OnAsteroidCollided(Collider2D other, AsteroidView view)
+    {
+        var asteroid = _asteroids.First(x => x.View == view);
+        
+        asteroid.View.gameObject.SetActive(false);
+        asteroid.IsActive = false;
+
+        var childType = GetChildAsteroidType(asteroid.Model.Type);
+        
+        if(!childType.HasValue) return;
+
+        float asteroidSpawnSpread = asteroid.Model.AsteroidSpawnSpread;
+        for (int i = 0; i < asteroid.Model.AsteroidSplitCount; i++)
+        {
+            float spread = Random.Range(-asteroidSpawnSpread, asteroidSpawnSpread) / 2;
+            float angle = spread + asteroid.Model.Angle;
+            CreateAsteroid(childType.Value, asteroid.Model.Position, angle);
+        }
+    }
+    private static AsteroidType? GetChildAsteroidType(AsteroidType currentType)
+    {
+        return currentType switch
+        {
+            AsteroidType.Big => AsteroidType.Medium,
+            AsteroidType.Medium => AsteroidType.Small,
+            _ => null
+        };
     }
 }
 }

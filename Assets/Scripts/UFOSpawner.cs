@@ -40,7 +40,7 @@ public class UFOSpawner : MonoBehaviour
         var ufoTransform = ufo.transform;
         ufoTransform.position = position;
 
-        ufo.GetComponent<UFO>().StartMoving();
+        //ufo.GetComponent<UFO>().StartMoving();
         ufo.SetActive(true);
         
         StartCoroutine(Spawn());
