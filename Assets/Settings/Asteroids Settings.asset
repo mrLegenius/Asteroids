@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dc07c2a2fb6a7242ac6916099105c40, type: 3}
+  m_Name: Asteroids Settings
+  m_EditorClassIdentifier: 
+  _bigAsteroids:
+  - {fileID: 6993517724922875098, guid: 3c33f25aa6710e843af68ac550632530, type: 3}
+  - {fileID: 2887492937939806410, guid: bf72ae17675d55040b013ce0333679ec, type: 3}
+  _mediumAsteroids:
+  - {fileID: 8605650497837985639, guid: 77ab6407f5cf0d44ca51c837f98939e6, type: 3}
+  - {fileID: 5752046852301485455, guid: 341fd90006fe13e4e980dd867bac2b1e, type: 3}
+  _smallAsteroids:
+  - {fileID: 7720900453722051987, guid: 7f78f10e3e7c31649a67d73d500cdb23, type: 3}
+  - {fileID: 3983789888383706174, guid: b2a16440d87559147b8e54c3365dbb12, type: 3}
+  SpeedModifier: 1.5
+  MinInitialSpeed: 5
+  MaxInitialSpeed: 7
+  SplitCount: 2
+  SplitSpreadAngle: 30

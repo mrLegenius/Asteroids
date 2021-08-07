@@ -8,160 +8,154 @@ using Random = UnityEngine.Random;
 
 namespace Asteroids.Asteroid
 {
+public class Asteroid
+{
+    public AsteroidView View { get; set; }
+    public AsteroidModel Model { get; set; }
+}
+
 public class AsteroidsController : ITickable, IInitializable, IDisposable
 {
-    private class PooledAsteroid
-    {
-        public bool IsActive { get; set; }
-
-        public AsteroidView View { get; set; }
-
-        public AsteroidModel Model { get; set; }
-    }
-
-    private readonly List<PooledAsteroid> _asteroids = new List<PooledAsteroid>();
-
-    private IEnumerable<PooledAsteroid> AvailableSmallAsteroids
-        => _asteroids.Where(x
-            => !x.IsActive && x.Model.Type == AsteroidType.Small);
-
-    private IEnumerable<PooledAsteroid> AvailableMediumAsteroids
-        => _asteroids.Where(x
-            => !x.IsActive && x.Model.Type == AsteroidType.Medium);
-
-    private IEnumerable<PooledAsteroid> AvailableBigAsteroids
-        => _asteroids.Where(x
-            => !x.IsActive && x.Model.Type == AsteroidType.Big);
-    
-    private IEnumerable<PooledAsteroid> ActiveAsteroids
-        => _asteroids.Where(x => x.IsActive);
-    
-    private readonly AsteroidsSet _asteroidsSet;
-
-    private readonly Transform _asteroidsContainer;
-
     private readonly SignalBus _signalBus;
-
-    private bool _isGameStarted = false;
     
-    public AsteroidsController(AsteroidsSet asteroidsSet, SignalBus signalBus)
+    private readonly List<Asteroid> _asteroids = new List<Asteroid>();
+    private readonly Dictionary<AsteroidType, Pool<Asteroid>> _pools =
+        new Dictionary<AsteroidType, Pool<Asteroid>>
+        {
+            { AsteroidType.Big, new Pool<Asteroid>() },
+            { AsteroidType.Medium, new Pool<Asteroid>() },
+            { AsteroidType.Small, new Pool<Asteroid>() }
+        };
+    
+    private bool _isGameStarted;
+    private readonly Transform _asteroidsContainer;
+    private readonly AsteroidsSettings _asteroidsSettings;
+    
+    public AsteroidsController(AsteroidsSettings asteroidsSettings, SignalBus signalBus)
     {
-        _asteroidsSet = asteroidsSet;
         _signalBus = signalBus;
-        
+        _asteroidsSettings = asteroidsSettings;
         _asteroidsContainer = new GameObject("Asteroids").transform;
+        
+        foreach (var pool in _pools)
+        {
+            pool.Value
+                .SetConstructor(() => ConstructAsteroid(pool.Key))
+                .OnPopped(asteroid =>
+                {
+                    asteroid.View.gameObject.SetActive(true);
+                    _asteroids.Add(asteroid);
+                })
+                .OnPushed(asteroid =>
+                {
+                    asteroid.View.gameObject.SetActive(false);
+                })
+                .OnCleared(bullets => bullets.ForEach(x
+                    => Object.Destroy(x.View.gameObject)));
+        }
     }
-
+    
     public void Initialize()
     {
         _signalBus.Subscribe<GameStartedSignal>(OnGameStarted);
+        _signalBus.Subscribe<ShipDestroyedSignal>(OnShipDestroyed);
     }
-
     public void Dispose()
     {
         _signalBus.Unsubscribe<GameStartedSignal>(OnGameStarted);
+        _signalBus.Unsubscribe<ShipDestroyedSignal>(OnShipDestroyed);
+    }
+    public void Tick()
+    {
+        if(!_isGameStarted) return;
+        
+        if (!_asteroids.Any())
+        {
+            _signalBus.Fire<DestroyedAllAsteroidsSignal>();
+            return;
+        }
+        
+        foreach (var asteroid in _asteroids)
+        {
+            Move(asteroid.Model);
+            Repaint(asteroid);
+        }
     }
     
     public void CreateAsteroid(AsteroidType type,
         Vector2 position,
         float angle)
     {
-        var pooledAsteroid = type switch
-        {
-            AsteroidType.Big => AvailableBigAsteroids.FirstOrDefault(),
-            AsteroidType.Medium =>
-                AvailableMediumAsteroids.FirstOrDefault(),
-            AsteroidType.Small =>
-                AvailableSmallAsteroids.FirstOrDefault(),
-            _ => null
-        };
+        var asteroid = _pools[type].Pop();
 
-        if (pooledAsteroid != null)
-        {
-            pooledAsteroid.View.gameObject.SetActive(true);
-
-            var model = pooledAsteroid.Model;
-            model.Position = position;
-            model.Angle = angle;
-            model.Speed = model.GetRandomSpeed();
-
-            pooledAsteroid.IsActive = true;
-        }
-        else
-        {
-            var prefab = _asteroidsSet.GetRandomAsteroidPrefab(type);
-            var view = Object.Instantiate(prefab, _asteroidsContainer);
-
-            var model = new AsteroidModel
-            {
-                Type = type,
-                Position = position,
-                Angle = angle,
-                MinSpeed = 10,
-                MaxSpeed = 20,
-                AsteroidSplitCount = 2,
-                AsteroidSpawnSpread = 90
-            };
-            model.Speed = model.GetRandomSpeed();
-
-            var asteroid = new PooledAsteroid
-            {
-                View = view,
-                Model = model,
-                IsActive = true
-            };
-            
-            asteroid.View.OnCollided(OnAsteroidCollided);
-            _asteroids.Add(asteroid);
-        }
+        var model = asteroid.Model;
+        model.Position = position;
+        model.Angle = angle;
+        model.Speed = model.GetRandomSpeed();
     }
 
-    public void Tick()
+    private Asteroid ConstructAsteroid(AsteroidType type)
     {
-        if(!_isGameStarted) return;
-        
-        var activeAsteroids = ActiveAsteroids.ToList();
-        if (!activeAsteroids.Any())
-        {
-            _signalBus.Fire<DestroyedAllAsteroidsSignal>();
-            return;
-        }
-        
-        foreach (var asteroid in activeAsteroids)
-        {
-            var model = asteroid.Model;
-            var view = asteroid.View;
+        var prefab = _asteroidsSettings.GetRandomAsteroidPrefab(type);
+        var view = Object.Instantiate(prefab,
+            Utilities.GetFarPoint(),
+            Quaternion.identity,
+            _asteroidsContainer);
 
-            model.Position =
-                Utilities.GetWrapAroundPosition(model.Position);
-            
-            MoveAsteroid(model);
-            RepaintView(view, model);
+        float speedModifier = 1f;
+
+        for (int i = 0; i < (int)type; i++)
+        {
+            speedModifier *= _asteroidsSettings.SpeedModifier;
         }
+        
+        var model = new AsteroidModel
+        {
+            Type = type,
+            MinSpeed = _asteroidsSettings.MinInitialSpeed * speedModifier,
+            MaxSpeed = _asteroidsSettings.MaxInitialSpeed * speedModifier,
+            AsteroidSplitCount = _asteroidsSettings.SplitCount,
+            AsteroidSpawnSpread = _asteroidsSettings.SplitSpreadAngle
+        };
+        model.Speed = model.GetRandomSpeed();
+
+        var asteroid = new Asteroid
+        {
+            View = view,
+            Model = model,
+        };
+            
+        asteroid.View.OnCollided(OnAsteroidCollided);
+        return asteroid;
     }
-    
-    private void MoveAsteroid(AsteroidModel model)
+    private void Move(AsteroidModel model)
     {
         var direction = Utilities.GetDirectionFromAngle(model.Angle * Mathf.Deg2Rad);
         model.Position += model.Speed * Time.deltaTime * direction;
+        model.Position =
+            Utilities.GetWrapAroundPosition(model.Position);
     }
-
-    private void RepaintView(AsteroidView view, AsteroidModel model)
+    private void Repaint(Asteroid asteroid)
     {
-        view.Repaint(model);
+        asteroid.View.Repaint(asteroid.Model);
     }
-
-    private void OnGameStarted(GameStartedSignal signal)
+    private void Destroy(Asteroid asteroid)
     {
-        _isGameStarted = true;
+        _pools[asteroid.Model.Type].Push(asteroid);
+        _asteroids.Remove(asteroid);
+        
+        _signalBus.Fire(
+            new AsteroidDestroyedSignal(asteroid.Model.ScoreOnDestroyed));
     }
-
+    
     private void OnAsteroidCollided(Collider2D other, AsteroidView view)
     {
-        var asteroid = _asteroids.First(x => x.View == view);
+        var asteroid = _asteroids.FirstOrDefault(x => x.View == view);
         
-        asteroid.View.gameObject.SetActive(false);
-        asteroid.IsActive = false;
+        if(asteroid == null)
+            return;
+
+        Destroy(asteroid);
 
         var childType = GetChildAsteroidType(asteroid.Model.Type);
         
@@ -183,6 +177,27 @@ public class AsteroidsController : ITickable, IInitializable, IDisposable
             AsteroidType.Medium => AsteroidType.Small,
             _ => null
         };
+    }
+    
+    private void OnGameStarted(GameStartedSignal signal)
+    {
+        _isGameStarted = true;
+    }
+
+    private void OnShipDestroyed(ShipDestroyedSignal signal)
+    {
+        _isGameStarted = false;
+        foreach (var asteroid in _asteroids)
+        {
+            _pools[asteroid.Model.Type].Push(asteroid);
+            Object.Destroy(asteroid.View.gameObject);
+        }
+        _asteroids.Clear();
+        
+        foreach (var pool in _pools.Values)
+        {
+            pool.Clear();
+        }
     }
 }
 }

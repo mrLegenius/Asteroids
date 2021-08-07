@@ -1,5 +1,6 @@
 using System;
 using Asteroids.Views;
+using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Asteroids.Controllers
@@ -7,40 +8,47 @@ namespace Asteroids.Controllers
 public class GameOverController : IInitializable, IDisposable
 {
     private readonly GameOverView _gameOverView;
-
-    public GameOverController(GameOverView gameOverView)
+    private readonly SignalBus _signalBus;
+    private readonly ScoreManager _scoreManager;
+    
+    public GameOverController(GameOverView gameOverView,
+        SignalBus signalBus, ScoreManager scoreManager)
     {
         _gameOverView = gameOverView;
-        
-        Init();
+        _signalBus = signalBus;
+        _scoreManager = scoreManager;
     }
     
     public void Initialize()
     {
+        _signalBus.Subscribe<ShipDestroyedSignal>(OnShipDestroyed);
         
+        _gameOverView.OnRestartButtonClicked(RestartGame);
+        RepaintView();
     }
 
     public void Dispose()
     {
-        
+        _signalBus.Unsubscribe<ShipDestroyedSignal>(OnShipDestroyed);
     }
 
-    public void Init()
+    private void RepaintView()
     {
-        _gameOverView.OnRestartButtonClicked(RestartGame);
-        
-        RepaintView();
-    }
-    
-    public void RepaintView()
-    {
-        //TODO: Get Values from ScoreManager
-        _gameOverView.Repaint(0,0 );
+        _gameOverView.Repaint(_scoreManager.CurrentScore,
+            _scoreManager.HighScore);
     }
     
     private void RestartGame()
     {
+        _gameOverView.gameObject.SetActive(false);
+        _signalBus.Fire<GameStartedSignal>();
+    }
+
+    private void OnShipDestroyed(ShipDestroyedSignal signal)
+    {
+        RepaintView();
         
+        _gameOverView.gameObject.SetActive(true);
     }
 }
 }

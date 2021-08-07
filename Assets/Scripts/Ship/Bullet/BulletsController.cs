@@ -1,118 +1,142 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Zenject;
+using Object = UnityEngine.Object;
 
 namespace Asteroids.Ship.Bullet
 {
-public class BulletsController : ITickable
+public class BulletsController : ITickable, IInitializable, IDisposable
 {
-    private class PooledBullet
+    private class Bullet
     {
-        public bool IsActive { get; set; }
         public BulletView View { get; set; }
         public BulletModel Model { get; set; }
     }
 
-    private readonly List<PooledBullet> _bullets = new List<PooledBullet>();
-
-    private IEnumerable<PooledBullet> AvailableBullets
-        => _bullets.Where(bullet => !bullet.IsActive);
-    private IEnumerable<PooledBullet> ActiveBullets
-        => _bullets.Where(bullet => bullet.IsActive);
+    private readonly List<Bullet> _bullets = new List<Bullet>();
+    private readonly Pool<Bullet> _pool = new Pool<Bullet>();
 
     private readonly Transform _bulletsContainer;
-    
-    public BulletsController()
+    private readonly BulletSettings _bulletSettings;
+    private readonly SignalBus _signalBus;
+
+    public BulletsController(BulletSettings bulletSettings,
+        SignalBus signalBus)
     {
+        _bulletSettings = bulletSettings;
+        _signalBus = signalBus;
         _bulletsContainer = new GameObject("Bullets").transform;
+
+        _pool
+            .SetConstructor(ConstructBullet)
+            .OnPopped(bullet =>
+            {
+                bullet.View.gameObject.SetActive(true);
+                _bullets.Add(bullet);
+            })
+            .OnPushed(bullet =>
+            {
+                bullet.View.gameObject.SetActive(false);
+            })
+            .OnCleared(bullets => bullets.ForEach(x
+                    => Object.Destroy(x.View.gameObject)));
     }
-    
-    public void CreateBullet(Vector2 position, float angle, BulletView prefab)
+
+    public void Initialize()
     {
-        var pooledBullet =
-            AvailableBullets.FirstOrDefault(x => !x.IsActive);
-        
-        if (pooledBullet != null)
-        {
-            pooledBullet.View.gameObject.SetActive(true);
+        _signalBus.Subscribe<ShipDestroyedSignal>(OnShipDestroyed);
+    }
 
-            var model = pooledBullet.Model;
-            model.Position = position;
-            model.Angle = angle;
-            model.LifeTimer = model.LifeTime;
-
-            pooledBullet.IsActive = true;
-        }
-        else
-        {
-            var bulletView = Object.Instantiate(prefab, _bulletsContainer);
-
-            var bulletModel = new BulletModel
-            {
-                Position = position,
-                Angle = angle,
-                MoveSpeed = 30,
-                LifeTime = 2,
-                LifeTimer = 2
-            };
-            
-            bulletView.OnCollided(OnBulletCollided);
-            
-            _bullets.Add(new PooledBullet
-            {
-                View = bulletView,
-                Model = bulletModel,
-                IsActive = true
-            });
-        }
+    public void Dispose()
+    {
+        _signalBus.Unsubscribe<ShipDestroyedSignal>(OnShipDestroyed);
     }
 
     public void Tick()
     {
-        foreach (var bullet in ActiveBullets)
+        foreach (var bullet in _bullets)
         {
             var model = bullet.Model;
-            var view = bullet.View;
 
-            model.Position =
-                Utilities.GetWrapAroundPosition(model.Position);
-            MoveBullet(model);
-            RepaintView(view, model);
+            Move(model);
+            Repaint(bullet);
 
             model.LifeTimer -= Time.deltaTime;
 
-            if (IsBulletIsDead(model))
-                DisableBullet(bullet);
+            if (model.ShouldBeDestroyed) Destroy(bullet);
         }
+
+        _bullets.RemoveAll(x => x.Model.ShouldBeDestroyed);
     }
 
-    private void MoveBullet(BulletModel model)
+    public void CreateBullet(Vector2 position, float angle)
     {
-        var direction = Utilities.GetDirectionFromAngle(model.Angle * Mathf.Deg2Rad);
+        var bullet = _pool.Pop();
+
+        var model = bullet.Model;
+        model.Position = position;
+        model.Angle = angle;
+        model.LifeTimer = _bulletSettings.LifeTime;
+    }
+
+    private Bullet ConstructBullet()
+    {
+        var view =
+            Object.Instantiate(_bulletSettings.Prefab,
+                Utilities.GetFarPoint(),
+                Quaternion.identity,
+                _bulletsContainer);
+
+        var model = new BulletModel { MoveSpeed = _bulletSettings.Speed };
+
+        view.OnCollided(OnBulletCollided);
+
+        return new Bullet
+        {
+            View = view,
+            Model = model
+        };
+    }
+
+    private void Move(BulletModel model)
+    {
+        var direction =
+            Utilities.GetDirectionFromAngle(model.Angle * Mathf.Deg2Rad);
         model.Position += model.MoveSpeed * Time.deltaTime * direction;
+        model.Position =
+            Utilities.GetWrapAroundPosition(model.Position);
     }
 
-    private void RepaintView(BulletView view, BulletModel model)
+    private void Repaint(Bullet bullet)
     {
-        view.Repaint(model);
+        bullet.View.Repaint(bullet.Model);
     }
 
-    private bool IsBulletIsDead(BulletModel model)
+    private void Destroy(Bullet bullet)
     {
-        return model.LifeTimer <= 0.0;
+        _pool.Push(bullet);
     }
 
-    private void DisableBullet(PooledBullet bullet)
-    {
-        bullet.IsActive = false;
-        bullet.View.gameObject.SetActive(false);
-    }
-    
     private void OnBulletCollided(Collider2D other, BulletView view)
     {
-        var bullet = _bullets.First(x => x.View == view);
-        DisableBullet(bullet);
+        var bullet = _bullets.FirstOrDefault(x => x.View == view);
+        if(bullet == null)
+            return;
+        
+        Destroy(bullet);
+        _bullets.Remove(bullet);
+    }
+
+    private void OnShipDestroyed(ShipDestroyedSignal signal)
+    {
+        foreach (var bullet in _bullets)
+        {
+            Object.Destroy(bullet.View.gameObject);
+        }
+        _bullets.Clear();
+        _pool.Clear();
     }
 }
 }

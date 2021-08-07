@@ -20,6 +20,12 @@ public class GameplayView : MonoBehaviour
 
     [SerializeField]
     private TMP_Text _cooldownText;
+    
+    [SerializeField]
+    private TMP_Text _scoreText;
+
+    [SerializeField]
+    private TMP_Text _highScoreText;
 
     public void Show()
     {
@@ -37,7 +43,13 @@ public class GameplayView : MonoBehaviour
         _angleText.SetText("Angle: {0:0.00}", ship.Angle);
         _speedText.SetText("Speed: {0:0.00}", ship.Movement.Speed);
         _lasersText.SetText("Lasers: {0:0.00}", ship.LaserFiring.LaserCount);
-        _cooldownText.SetText("Laser Cooldown: {0:0.00}", ship.LaserFiring.LaserCurrentCooldown);
+        _cooldownText.SetText("Laser Cooldown: {0:0.00}", ship.LaserFiring.LaserCooldown);
+    }
+
+    public void RepaintScores(int current, int high)
+    {
+        _scoreText.SetText($"Score: {current}");
+        _highScoreText.SetText($"High Score: {high}");
     }
 }
 }

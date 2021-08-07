@@ -11,8 +11,8 @@ public static class Utilities
     /// <returns></returns>
     public static Vector2 GetDirectionFromAngle(float angle)
     {
-        var x = Mathf.Cos(angle);
-        var y = Mathf.Sin(angle);
+        float x = Mathf.Cos(angle);
+        float y = Mathf.Sin(angle);
 
         return new Vector2(x, y);
     }
@@ -25,6 +25,10 @@ public static class Utilities
         return _mainCamera;
     }
 
+    public static Vector3 GetFarPoint()
+    {
+        return Vector3.one * 100_000;
+    }
     public static Vector2 GetRandomPositionOutOfScreen(Vector2 offset)
     {
         var x = Screen.width + offset.x;

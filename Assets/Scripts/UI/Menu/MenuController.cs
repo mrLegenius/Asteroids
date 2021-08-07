@@ -8,23 +8,22 @@ public class MenuController : IInitializable, IDisposable
 {
     private readonly MenuView _menuView;
 
-    private SignalBus _signalBus;
-    public MenuController(MenuView menuView, SignalBus signalBus)
+    private readonly SignalBus _signalBus;
+    private readonly ScoreManager _scoreManager;
+    public MenuController(MenuView menuView, SignalBus signalBus, ScoreManager scoreManager)
     {
         _menuView = menuView;
         _signalBus = signalBus;
-        
-        Init();
+        _scoreManager = scoreManager;
     }
 
-    public void Initialize() { }
-
-    public void Dispose() { }
-
-    public void Init()
+    public void Initialize()
     {
         _menuView.OnStartGameButtonClicked(StartGame);
+        RepaintView();
     }
+
+    public void Dispose() { }
 
     public void StartGame()
     {
@@ -34,8 +33,8 @@ public class MenuController : IInitializable, IDisposable
 
     public void RepaintView()
     {
-        //TODO: Get Values from ScoreManager
-        _menuView.Repaint(0, 0);
+        _menuView.Repaint(_scoreManager.CurrentScore,
+            _scoreManager.HighScore);
     }
 }
 }

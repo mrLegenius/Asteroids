@@ -1,0 +1,27 @@
+{
+    "name": "UFO",
+    "rootNamespace": "",
+    "references": [
+        "GUID:0d8beb7f090555447a6cf5ce9e54dbb4",
+        "GUID:f44d0fa6e382a244ebc06efd0cde7790",
+        "GUID:e780987cee0dc1d47afe83f172b1f67d",
+        "GUID:28e473a46746976408c98b3fe8888841",
+        "GUID:792267f36aa489348b7f2706abb856d2"
+    ],
+    "includePlatforms": [
+        "Android",
+        "Editor",
+        "iOS",
+        "WebGL",
+        "WindowsStandalone32",
+        "WindowsStandalone64"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

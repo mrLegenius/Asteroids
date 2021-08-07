@@ -6,7 +6,7 @@ public class AsteroidView : MonoBehaviour
 {
     private Transform _transform;
 
-    private Action<Collider2D, AsteroidView> collide;
+    private Action<Collider2D, AsteroidView> _collided;
 
     private void Awake()
     {
@@ -14,12 +14,12 @@ public class AsteroidView : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        collide?.Invoke(other, this);
+        _collided?.Invoke(other, this);
     }
 
     public void OnCollided(Action<Collider2D, AsteroidView> callback)
     {
-        collide = callback;
+        _collided = callback;
     }
     
     public void Repaint(AsteroidModel model)

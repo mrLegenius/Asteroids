@@ -10,10 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5585221224398835640}
   - component: {fileID: 5585221224398835642}
-  - component: {fileID: 5585221224398835621}
-  - component: {fileID: 1451692569147474909}
-  - component: {fileID: 1294363953}
-  - component: {fileID: 1294363955}
   - component: {fileID: 1294363951}
   - component: {fileID: 1107290326496622905}
   - component: {fileID: 3621719448533809575}
@@ -24,7 +20,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5585221224398835640
 Transform:
   m_ObjectHideFlags: 0
@@ -62,68 +58,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &5585221224398835621
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5585221224398835620}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8f3ebdeb2dee6243abe78911ba373c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  accelerationRate: 20
-  rotationRate: 180
---- !u!114 &1451692569147474909
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5585221224398835620}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7896decabf99984784d751b6d536754, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: 0.1, y: 0.1}
-  beyondScreenSpace: {x: 50, y: 50}
---- !u!114 &1294363953
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5585221224398835620}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28c4460c42cd94c40a6423fc9cc1e08f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shooting: {fileID: 1294363955}
-  movement: {fileID: 5585221224398835621}
-  thruster: {fileID: 2640652314628807487}
-  shotSound: {fileID: 8300000, guid: cfd21e438d0de1445a8616e7c650bcf7, type: 3}
-  explosionParticles: {fileID: 1583003238860792984, guid: cf8f9eb48dd8b1244a10c4f47c1a6b54, type: 3}
-  explosionClip: {fileID: 8300000, guid: b31a73f46a9fff1448df23bc1c3bf576, type: 3}
-  thrusterSound: {fileID: 1107290326496622905}
---- !u!114 &1294363955
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5585221224398835620}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76269277c30f08d4e8f0a2fa024caae2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bulletPrefab: {fileID: 650472550153973074, guid: d91c27381f482e0459a1a13023ac93d6, type: 3}
-  fireRate: 5
-  spreading: 0
 --- !u!60 &1294363951
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -131,7 +65,7 @@ PolygonCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5585221224398835620}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 1
@@ -261,6 +195,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b89a8f60b81d8244a8ca3b2c62a9052, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _thruster: {fileID: 2640652314628807487}
   _moveAction:
     m_Name: Move
     m_Type: 0
@@ -311,7 +246,7 @@ MonoBehaviour:
       m_Flags: 8
   _fireAction:
     m_Name: Fire
-    m_Type: 1
+    m_Type: 0
     m_ExpectedControlType: Button
     m_Id: 7c32f414-bee3-451c-a550-d2d415bca70f
     m_Processors: 
@@ -538,4 +473,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 304421e81f236f64293b72f68d204ac4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  thrustFrequency: 0.05
+  _thrustFrequency: 0.1

@@ -5,18 +5,16 @@ namespace Asteroids.Models
 {
 public class Movement
 {
-    public float Speed { get; set; }
+    public float Speed => Velocity.magnitude;
     public float MaxSpeed { get; set; }
     public float Acceleration { get; set; }
     public float Deceleration { get; set; }
-    public Vector2 Velocity { get; set; }
     public float RotationSpeed { get; set; }
+    public Vector2 Velocity { get; set; }
 }
 
 public class Shooting
 {
-    public BulletView BulletPrefab { get; set; }
-
     public float FireRate
     {
         get => _fireRate;
@@ -26,18 +24,14 @@ public class Shooting
             if (Mathf.Abs(value) <= float.Epsilon)
             {
                 _fireRate = 0;
-                FireDelay = 0;
             }
             else
             {
-                _fireRate = value;
-                FireDelay = 1f / value;
+                _fireRate = 1f / value;
             }
         }
     }
 
-    public float FireDelay { get; private set; }
-    
     public float FireTimer { get; set; }
     
     public bool CanShoot => FireTimer <= 0;
@@ -46,10 +40,8 @@ public class Shooting
 }
 public class LaserFiring
 {
-    public int MaxLaserCount { get; set; }
     public int LaserCount { get; set; }
     public float LaserCooldown { get; set; }
-    public float LaserCurrentCooldown { get; set; }
 }
 public class ShipModel
 {

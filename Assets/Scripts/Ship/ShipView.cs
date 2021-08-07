@@ -10,6 +10,9 @@ public class ShipView : MonoBehaviour
     private Transform _transform;
 
     [SerializeField]
+    private ShipThrusterView _thruster;
+    
+    [SerializeField]
     private InputAction _moveAction;
     
     [SerializeField]
@@ -21,32 +24,41 @@ public class ShipView : MonoBehaviour
     private Action<Vector2> _moved;
     
     private Action<bool> _shoot;
+
+    private Action<Collider2D, ShipView> _collided;
     
     private void Awake()
     {
         _transform = transform;
     }
-
     private void OnEnable()
     {
         _moveAction.Enable();
         _fireAction.Enable();
         _laserAction.Enable();
     }
-    
     private void OnDisable()
     {
         _moveAction.Disable();
         _fireAction.Disable();
         _laserAction.Disable();
     }
-
-    public void Update()
+    private void Update()
     {
-        _moved?.Invoke(_moveAction.ReadValue<Vector2>());
+        var inputValue = _moveAction.ReadValue<Vector2>();
+        _thruster.Thrust(inputValue.y > 0.5f);
+        _moved?.Invoke(inputValue);
         _shoot?.Invoke(_fireAction.ReadValue<float>() > 0.5f);
     }
-
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        _collided?.Invoke(other, this);
+    }
+    public ShipView OnCollided(Action<Collider2D, ShipView> callback)
+    {
+        _collided = callback;
+        return this;
+    }
     public ShipView OnMoved(Action<Vector2> callback)
     {
         _moved = callback;
@@ -59,7 +71,7 @@ public class ShipView : MonoBehaviour
     }
     public ShipView OnLaserFired(Action callback)
     { 
-        _fireAction.performed += context =>
+        _laserAction.performed += context =>
         {
             callback.Invoke();
         };

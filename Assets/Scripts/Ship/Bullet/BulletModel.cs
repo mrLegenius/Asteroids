@@ -9,9 +9,9 @@ public class BulletModel
     public float Angle { get; set; }
     
     public float MoveSpeed { get; set; }
-    
-    public float LifeTime { get; set; }
-    
+
     public float LifeTimer { get; set; }
+
+    public bool ShouldBeDestroyed => LifeTimer <= 0;
 }
 }
