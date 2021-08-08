@@ -21,8 +21,6 @@ public class BulletView : MonoBehaviour
 
     public void Repaint(BulletModel model)
     {
-        Debug.Log($"Bullet Speed = {model.MoveSpeed}");
-        
         _transform.position = model.Position;
 
         var rotation = _transform.rotation;

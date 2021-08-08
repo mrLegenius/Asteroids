@@ -20,16 +20,18 @@ public class UFOController : ITickable, IInitializable, IDisposable
     private readonly ShipModel _ship;
     private readonly UFOSettings _ufoSettings;
     private readonly Transform _ufoContainer;
-    
+
     private readonly Pool<UFO> _pool = new Pool<UFO>();
     private readonly List<UFO> _ufos = new List<UFO>();
-    
-    public UFOController(SignalBus signalBus, UFOSettings settings, ShipModel shipModel)
+
+    public UFOController(SignalBus signalBus,
+        UFOSettings settings,
+        ShipModel shipModel)
     {
         _signalBus = signalBus;
         _ship = shipModel;
         _ufoSettings = settings;
-        
+
         _ufoContainer = new GameObject("UFO").transform;
         _pool
             .SetConstructor(ConstructUFO)
@@ -52,7 +54,7 @@ public class UFOController : ITickable, IInitializable, IDisposable
     {
         _signalBus.Unsubscribe<ShipDestroyedSignal>(OnShipDestroyed);
     }
-    
+
     public void Tick()
     {
         foreach (var ufo in _ufos)
@@ -61,11 +63,11 @@ public class UFOController : ITickable, IInitializable, IDisposable
             Repaint(ufo);
         }
     }
-    
+
     public void CreateUFO(Vector2 position, float angle)
     {
         var ufo = _pool.Pop();
-        
+
         var model = ufo.Model;
         model.Position = position;
         model.Angle = angle;
@@ -87,41 +89,56 @@ public class UFOController : ITickable, IInitializable, IDisposable
         };
 
         ufo.View.OnCollided(OnUFOCollided);
+        ufo.View.OnRayHit(OnUFOHitByRay);
         return ufo;
     }
+
     private void Move(UFOModel model)
     {
         var direction = _ship.Position - model.Position;
-        model.Position += model.Speed * Time.deltaTime * direction.normalized;
+        model.Position +=
+            model.Speed * Time.deltaTime * direction.normalized;
         model.Position =
             Utilities.GetWrapAroundPosition(model.Position);
     }
-    private void Repaint(UFO ufo)
-    {
-        ufo.View.Repaint(ufo.Model);
-    }
+
+    private void Repaint(UFO ufo) { ufo.View.Repaint(ufo.Model); }
+
     private void Destroy(UFO ufo)
     {
         _pool.Push(ufo);
         _ufos.Remove(ufo);
-        
+
         _signalBus.Fire(
             new UFODestroyedSignal(ufo.Model.ScoreOnDestroyed));
     }
-    private void OnUFOCollided(Collider2D other, UFOView view)
+
+    private void OnUFODestroyed(UFOView view)
     {
         var ufo = _ufos.FirstOrDefault(x => x.View == view);
         if (ufo == null) return;
-        
+
         Destroy(ufo);
     }
-    
+
+
+    private void OnUFOCollided(Collider2D other, UFOView view)
+    {
+        OnUFODestroyed(view);
+    }
+
+    private void OnUFOHitByRay(UFOView view)
+    {
+        OnUFODestroyed(view);
+    }
+
     private void OnShipDestroyed(ShipDestroyedSignal signal)
     {
         foreach (var ufo in _ufos)
         {
             Object.Destroy(ufo.View.gameObject);
         }
+
         _ufos.Clear();
         _pool.Clear();
     }

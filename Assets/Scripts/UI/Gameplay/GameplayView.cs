@@ -42,8 +42,8 @@ public class GameplayView : MonoBehaviour
         _coordsText.SetText("Coord: ({0:0.00}, {1:0.00})", ship.Position.x, ship.Position.y);
         _angleText.SetText("Angle: {0:0.00}", ship.Angle);
         _speedText.SetText("Speed: {0:0.00}", ship.Movement.Speed);
-        _lasersText.SetText("Lasers: {0:0.00}", ship.LaserFiring.LaserCount);
-        _cooldownText.SetText("Laser Cooldown: {0:0.00}", ship.LaserFiring.LaserCooldown);
+        _lasersText.SetText("Lasers: {0:0.00}", ship.LaserFiring.Count);
+        _cooldownText.SetText("Laser Cooldown: {0:0.00}", ship.LaserFiring.Cooldown);
     }
 
     public void RepaintScores(int current, int high)

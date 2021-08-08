@@ -1,12 +1,14 @@
 using System;
+using Asteroids;
 using Asteroids.Asteroid;
 using UnityEngine;
 
-public class AsteroidView : MonoBehaviour
+public class AsteroidView : MonoBehaviour, IRayHittable
 {
     private Transform _transform;
 
     private Action<Collider2D, AsteroidView> _collided;
+    private Action<AsteroidView> _hitByRay;
 
     private void Awake()
     {
@@ -20,6 +22,11 @@ public class AsteroidView : MonoBehaviour
     public void OnCollided(Action<Collider2D, AsteroidView> callback)
     {
         _collided = callback;
+    }
+
+    public void OnRayHit(Action<AsteroidView> callback)
+    {
+        _hitByRay = callback;
     }
     
     public void Repaint(AsteroidModel model)
@@ -41,5 +48,9 @@ public class AsteroidView : MonoBehaviour
         // AudioManager.Instance.PlayOneShot(explosionClip);
     }
 
-   
+
+    public void Hit()
+    {
+        _hitByRay?.Invoke(this);
+    }
 }

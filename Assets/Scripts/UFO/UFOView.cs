@@ -3,12 +3,12 @@ using UnityEngine;
 
 namespace Asteroids.UFO
 {
-public class UFOView : MonoBehaviour
+public class UFOView : MonoBehaviour, IRayHittable
 {
     private Transform _transform;
 
     private Action<Collider2D, UFOView> _collided;
-
+    private Action<UFOView> _hitByRay;
     private void Awake()
     {
         _transform = transform;
@@ -18,13 +18,23 @@ public class UFOView : MonoBehaviour
     {
         _collided = callback;
     }
+    public void OnRayHit(Action<UFOView> callback)
+    {
+        _hitByRay = callback;
+    }
     public void Repaint(UFOModel model)
     {
         _transform.position = model.Position;
 
         var rotation = _transform.rotation;
         rotation.eulerAngles = new Vector3(0, 0, model.Angle);
+    }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        _collided?.Invoke(other, this);
+        
+        
         // //Активирует частицы взрыва
         // var particlesGO = PoolManager.Instance.GetObject(explosionParticles.gameObject);
         // particlesGO.SetActive(true);
@@ -36,9 +46,9 @@ public class UFOView : MonoBehaviour
         // AudioManager.Instance.PlayOneShot(explosionClip);
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    public void Hit()
     {
-        _collided?.Invoke(other, this);
+     _hitByRay?.Invoke(this);   
     }
 }
 }

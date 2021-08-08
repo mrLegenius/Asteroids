@@ -59,7 +59,11 @@ public class GameplayInstaller : MonoInstaller
             {
                 FireRate = _shipSettings.FireRate
             },
-            LaserFiring = new LaserFiring()
+            LaserFiring = new LaserFiring
+            {
+                Count = _shipSettings.LasersCount,
+                Cooldown = _shipSettings.LaserReload
+            }
         };
     }
 
@@ -82,6 +86,10 @@ public class GameplayInstaller : MonoInstaller
             .NonLazy();
         
         Container.BindInterfacesAndSelfTo<BulletsController>()
+            .AsSingle()
+            .NonLazy();
+        
+        Container.BindInterfacesAndSelfTo<LaserController>()
             .AsSingle()
             .NonLazy();
         

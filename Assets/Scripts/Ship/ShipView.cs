@@ -11,6 +11,9 @@ public class ShipView : MonoBehaviour
 
     [SerializeField]
     private ShipThrusterView _thruster;
+
+    [SerializeField]
+    private LineRenderer _laser;
     
     [SerializeField]
     private InputAction _moveAction;
@@ -85,6 +88,8 @@ public class ShipView : MonoBehaviour
         var rotation = _transform.rotation;
         rotation.eulerAngles = new Vector3(0, 0, model.Angle);
         _transform.rotation = rotation;
+
+        _laser.enabled = model.LaserFiring.IsFiring;
     }
 }
 }

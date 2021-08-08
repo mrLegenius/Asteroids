@@ -20,5 +20,7 @@ public class ShipSettings : ScriptableObject
     [Header("Laser Firing")]
     public int LasersCount;
     public float LaserReload;
+    public float LaserDuration;
+    public LayerMask Layer;
 }
 }

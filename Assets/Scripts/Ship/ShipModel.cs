@@ -40,8 +40,11 @@ public class Shooting
 }
 public class LaserFiring
 {
-    public int LaserCount { get; set; }
-    public float LaserCooldown { get; set; }
+    public int Count { get; set; }
+    public float Cooldown { get; set; }
+    public float Timer { get; set; }
+
+    public bool IsFiring { get; set; }
 }
 public class ShipModel
 {

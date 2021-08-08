@@ -126,6 +126,7 @@ public class AsteroidsController : ITickable, IInitializable, IDisposable
         };
             
         asteroid.View.OnCollided(OnAsteroidCollided);
+        asteroid.View.OnRayHit(OnAsteroidHitByRay);
         return asteroid;
     }
     private void Move(AsteroidModel model)
@@ -147,8 +148,8 @@ public class AsteroidsController : ITickable, IInitializable, IDisposable
         _signalBus.Fire(
             new AsteroidDestroyedSignal(asteroid.Model.ScoreOnDestroyed));
     }
-    
-    private void OnAsteroidCollided(Collider2D other, AsteroidView view)
+
+    private void OnAsteroidDestroyed(AsteroidView view)
     {
         var asteroid = _asteroids.FirstOrDefault(x => x.View == view);
         
@@ -169,16 +170,17 @@ public class AsteroidsController : ITickable, IInitializable, IDisposable
             CreateAsteroid(childType.Value, asteroid.Model.Position, angle);
         }
     }
-    private static AsteroidType? GetChildAsteroidType(AsteroidType currentType)
+
+    private void OnAsteroidCollided(Collider2D other, AsteroidView view)
     {
-        return currentType switch
-        {
-            AsteroidType.Big => AsteroidType.Medium,
-            AsteroidType.Medium => AsteroidType.Small,
-            _ => null
-        };
+        OnAsteroidDestroyed(view);
     }
-    
+
+    private void OnAsteroidHitByRay(AsteroidView view)
+    {
+        OnAsteroidDestroyed(view);
+    }
+
     private void OnGameStarted(GameStartedSignal signal)
     {
         _isGameStarted = true;
@@ -198,6 +200,16 @@ public class AsteroidsController : ITickable, IInitializable, IDisposable
         {
             pool.Clear();
         }
+    }
+    
+    private static AsteroidType? GetChildAsteroidType(AsteroidType currentType)
+    {
+        return currentType switch
+        {
+            AsteroidType.Big => AsteroidType.Medium,
+            AsteroidType.Medium => AsteroidType.Small,
+            _ => null
+        };
     }
 }
 }

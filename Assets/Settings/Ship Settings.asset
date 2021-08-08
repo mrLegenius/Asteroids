@@ -19,4 +19,8 @@ MonoBehaviour:
   RotationSpeed: 180
   FireRate: 5
   LasersCount: 2
-  LaserReload: 60
+  LaserReload: 10
+  LaserDuration: 2
+  Layer:
+    serializedVersion: 2
+    m_Bits: 320
