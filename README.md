@@ -12,6 +12,8 @@ Made using Zenject and MVC Pattern
 * S - Laser shot
 * Space - Gun shot
  
+New asteroid will appear after you destroy all of previous ones 
+ 
 Try to get the highest score!
 Good Luck!
 
