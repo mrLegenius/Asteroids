@@ -20,3 +20,4 @@ Good Luck!
 * Remove duplicate code
 * Extract some logic to separate class
 * Add interface for each model/view/controller part
+* Remove some magical numbers
