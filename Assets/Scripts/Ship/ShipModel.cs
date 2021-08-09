@@ -45,6 +45,8 @@ public class LaserFiring
     public float Timer { get; set; }
 
     public bool IsFiring { get; set; }
+
+    public bool CanFire => Count > 0 && !IsFiring;
 }
 public class ShipModel
 {

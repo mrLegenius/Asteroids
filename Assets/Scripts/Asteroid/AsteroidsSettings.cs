@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Asteroids.Asteroid
 {
-[CreateAssetMenu(menuName = "Asteroids")]
+[CreateAssetMenu(menuName = "Settings/Asteroids")]
 public class AsteroidsSettings : ScriptableObject
 { 
     [SerializeField] private AsteroidView[] _bigAsteroids; 
@@ -16,6 +16,9 @@ public class AsteroidsSettings : ScriptableObject
     
     public float SplitCount;
     public float SplitSpreadAngle;
+    
+    public AudioClip ExplosionClip;
+    public ParticleSystem ExplosionParticles;
 
     public AsteroidView GetRandomAsteroidPrefab(AsteroidType type)
     {

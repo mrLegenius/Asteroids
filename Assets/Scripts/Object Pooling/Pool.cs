@@ -1,116 +1,66 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
-[System.Serializable]
-public class Pool
+namespace Asteroids
 {
-    public GameObject Prefab => prefab;
-
-    [SerializeField] private GameObject prefab;
-    [SerializeField] private int startAmount = 5;
+public class Pool<T> where T : new()
+{
+    private readonly Queue<T> _pooledObjects = new Queue<T>();
     
-    private readonly List<GameObject> _pool = new List<GameObject>();
-    private Transform _parent;
-
-    /// <summary>
-    /// Создает пустой пул
-    /// </summary>
-    public Pool() { }
-    
-    /// <summary>
-    /// Создает пул переданного объекта
-    /// </summary>
-    /// <param name="prefab">Игровой объект для которого создается пул</param>
-    public Pool(GameObject prefab)
+    private Func<T> _constructor;
+    private Action<T> _pushed;
+    private Action<T> _popped;
+    private Action<List<T>> _cleared;
+    public Pool<T> SetConstructor(Func<T> constructor)
     {
-        this.prefab = prefab;
+        _constructor = constructor;
+        return this;
+    }
+    public Pool<T> OnPushed(Action<T> callback)
+    {
+        _pushed = callback;
+        return this;
+    }
+    public Pool<T> OnPopped(Action<T> callback)
+    {
+        _popped = callback;
+        return this;
     }
 
-    /// <summary>
-    /// Создает начальное число игровый объектов в пуле
-    /// </summary>
-    public void Initialize()
+    public Pool<T> OnCleared(Action<List<T>> callback)
     {
-        for (int i = 0; i < startAmount; i++)
-        {
-            CreateNewEntity();
-        }
-    }
-    
-    /// <summary>
-    /// Меняет контейнер в котором создаются новые объекты
-    /// </summary>
-    /// <param name="parent">Новый контейнер</param>
-    public void SetParent(Transform parent)
-    {
-        _parent = parent;
+        _cleared = callback;
+        return this;
     }
 
-    /// <summary>
-    /// Получение объекта из пула, если он не активен. Создание нового объекта, когда нет ни одного неактивного объекта.
-    /// </summary>
-    /// <returns>Игровой объект из пула</returns>
-    public GameObject GetEntity()
+    public void Push(T obj)
     {
-        foreach (var entity in _pool.Where(entity => !entity.gameObject.activeInHierarchy))
-        {
-            return entity;
-        }
-        
-        return CreateNewEntity();
+        _pooledObjects.Enqueue(obj);
+        _pushed?.Invoke(obj);
     }
-    
-    /// <summary>
-    /// Возвращает количество активных объектов
-    /// </summary>
-    public int ActiveEntitiesCount()
+    public T Pop()
     {
-        return _pool.Count(entity => entity.gameObject.activeInHierarchy);
+        var obj = GetPooledObject();
+        _popped?.Invoke(obj);
+        return obj;
+    }
+    public void Clear()
+    {
+        _cleared?.Invoke(_pooledObjects.ToList());
+        _pooledObjects.Clear();
     }
 
-    /// <summary>
-    /// Возвращает список активных объектов
-    /// </summary>
-    public List<GameObject> GetActiveEntities()
+    private T GetPooledObject()
     {
-        return _pool.Where(entity => entity.gameObject.activeInHierarchy).ToList();
+        return _pooledObjects.Count <= 0
+            ? Construct()
+            : _pooledObjects.Dequeue();
     }
 
-    /// <summary>
-    /// Отключает все объекты в пуле
-    /// </summary>
-    public void DisableAllEntities()
+    private T Construct()
     {
-        foreach (var gameObject in _pool)
-        {
-            gameObject.SetActive(false);
-        }
+        return _constructor == null ? new T() : _constructor.Invoke();
     }
-    
-    /// <summary>
-    /// Добавляет в пул новый объект
-    /// </summary>
-    /// <returns>Ссылка на новый объект или null, если нет префаба</returns>
-    private GameObject CreateNewEntity()
-    {
-        if (!prefab)
-        {
-            Debug.LogError("No Prefab in a pool");
-            return null;
-        }
-
-        if(!_parent) 
-        {
-            _parent = new GameObject().transform;
-            _parent.name = prefab.name;
-        }     
-
-        var newEntity = Object.Instantiate(prefab, _parent);
-        _pool.Add(newEntity);
-
-        newEntity.SetActive(false);
-
-        return newEntity;
-    }
+}
 }

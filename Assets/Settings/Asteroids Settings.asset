@@ -26,3 +26,5 @@ MonoBehaviour:
   MaxInitialSpeed: 7
   SplitCount: 2
   SplitSpreadAngle: 30
+  ExplosionClip: {fileID: 8300000, guid: b31a73f46a9fff1448df23bc1c3bf576, type: 3}
+  ExplosionParticles: {fileID: 1583003238860792984, guid: cf8f9eb48dd8b1244a10c4f47c1a6b54, type: 3}

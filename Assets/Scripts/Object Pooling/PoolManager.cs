@@ -1,35 +1,13 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Синглтон класс, ответственный за управление пулами
-/// </summary>
+namespace Asteroids.PoolSystem
+{
 public class PoolManager : MonoBehaviour
 {
-    [SerializeField] private Pool[] startingPools;
-    public static PoolManager Instance;
+    private readonly Dictionary<string, MonoPool> _pools =
+        new Dictionary<string, MonoPool>();
     
-    private readonly Dictionary<string, Pool> _pools = new Dictionary<string, Pool>();
-    
-    private void Awake()
-    {
-        if(Instance)
-            Destroy(gameObject);
-        else
-        {
-            Instance = this;
-        }
-    }
-    
-    private void Start()
-    {
-        foreach (var pool  in startingPools)
-        {
-            AddPool(pool);
-        }
-    }
-
     /// <summary>
     /// Получение объекта по имени obj из пула. Если нет нужного пула, то он создается.
     /// </summary>
@@ -37,7 +15,19 @@ public class PoolManager : MonoBehaviour
     /// <returns>Объект пула</returns>
     public GameObject GetObject(GameObject obj)
     {
-        return _pools.ContainsKey(obj.name) ? _pools[obj.name].GetEntity() : AddPool(obj).GetEntity();
+        return _pools.ContainsKey(obj.name)
+            ? _pools[obj.name].GetEntity()
+            : CreatePoolFromGameObject(obj).GetEntity();
+    }
+
+    public MonoPool CreatePoolFromGameObject(GameObject go, int initialAmountInPool = 1)
+    {
+        if (_pools.ContainsKey(go.name)) return _pools[go.name];
+        
+        var newPool = new MonoPool(go, initialAmountInPool);
+        _pools.Add(go.name, newPool);
+
+        return newPool;
     }
 
     /// <summary>
@@ -51,16 +41,9 @@ public class PoolManager : MonoBehaviour
         }
     }
     
-    private Pool AddPool(GameObject obj)
+    private void AddPool(MonoPool monoPool)
     {
-        var newPool = new Pool(obj);
-        _pools.Add(obj.name, newPool);
-
-        return newPool;
+        _pools.Add(monoPool.Prefab.name, monoPool);
     }
-    private void AddPool(Pool pool)
-    {
-        _pools.Add(pool.Prefab.name, pool);
-        pool.Initialize();
-    }
+}
 }

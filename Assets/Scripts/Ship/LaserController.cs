@@ -20,9 +20,6 @@ public class LaserController : ITickable
 
     public void Fire()
     {
-        if (_laser.Count <= 0 || _laser.IsFiring)
-            return;
-
         _laser.Timer = _settings.LaserDuration;
         _laser.Count--;
         _laser.IsFiring = true;

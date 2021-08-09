@@ -1008,7 +1008,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &549529506
 GameObject:
@@ -1492,6 +1492,7 @@ MonoBehaviour:
   _asteroidSpawnSettings: {fileID: 11400000, guid: 4b77796ec8c8933498efca8387c155cd, type: 2}
   _ufoSettings: {fileID: 11400000, guid: cd7fedbc0d93d4e4c8c310fee13c4349, type: 2}
   _ufoSpawnSettings: {fileID: 11400000, guid: 58a72ba2ee5359c46be10a58b129ef26, type: 2}
+  _audioManager: {fileID: 1633439357}
 --- !u!114 &983872954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2397,11 +2398,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1633439353}
-  - component: {fileID: 1633439355}
   - component: {fileID: 1633439356}
   - component: {fileID: 1633439357}
   m_Layer: 0
-  m_Name: GameManager
+  m_Name: Audio Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2419,41 +2419,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1633439355
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1633439351}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ae65c2f8fedf214d91bdce3df9c9d6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startingPools:
-  - prefab: {fileID: 650472550153973074, guid: d91c27381f482e0459a1a13023ac93d6, type: 3}
-    startAmount: 10
-  - prefab: {fileID: 4445541920195252633, guid: 299b4e5def15b524c88addf409edbfef, type: 3}
-    startAmount: 10
-  - prefab: {fileID: 4713653179794254745, guid: 3c33f25aa6710e843af68ac550632530, type: 3}
-    startAmount: 5
-  - prefab: {fileID: 609633300863127433, guid: bf72ae17675d55040b013ce0333679ec, type: 3}
-    startAmount: 5
-  - prefab: {fileID: 6272067662468089892, guid: 77ab6407f5cf0d44ca51c837f98939e6, type: 3}
-    startAmount: 10
-  - prefab: {fileID: 8049293611105161932, guid: 341fd90006fe13e4e980dd867bac2b1e, type: 3}
-    startAmount: 10
-  - prefab: {fileID: 5422777916321346256, guid: 7f78f10e3e7c31649a67d73d500cdb23, type: 3}
-    startAmount: 20
-  - prefab: {fileID: 1670543049518515069, guid: b2a16440d87559147b8e54c3365dbb12, type: 3}
-    startAmount: 20
-  - prefab: {fileID: 6631470815821659004, guid: 3491a52b1e677db438981b6dd0a6f2d2, type: 3}
-    startAmount: 1
-  - prefab: {fileID: 3348112109737331853, guid: cf8f9eb48dd8b1244a10c4f47c1a6b54, type: 3}
-    startAmount: 10
 --- !u!82 &1633439356
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2466,7 +2433,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0

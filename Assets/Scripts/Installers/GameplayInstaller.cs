@@ -1,6 +1,7 @@
 using Asteroids.Asteroid;
 using Asteroids.Controllers;
 using Asteroids.Models;
+using Asteroids.PoolSystem;
 using Asteroids.Ship;
 using Asteroids.Ship.Bullet;
 using Asteroids.UFO;
@@ -29,7 +30,9 @@ public class GameplayInstaller : MonoInstaller
 
     [SerializeField]
     private UFOSpawnSettings _ufoSpawnSettings;
-    
+
+    [SerializeField]
+    private AudioManager _audioManager;
     public override void InstallBindings()
     {
         SignalBusInstaller.Install(Container);
@@ -42,6 +45,14 @@ public class GameplayInstaller : MonoInstaller
         Container.BindInterfacesAndSelfTo<ScoreManager>()
             .AsSingle()
             .NonLazy();
+
+        Container.Bind<PoolManager>()
+            .FromNewComponentOnNewGameObject()
+            .WithGameObjectName("Pool Manager")
+            .AsSingle()
+            .NonLazy();
+
+        Container.BindInstance(_audioManager);
     }
 
     private ShipModel CreateShipModel(InjectContext ctx)

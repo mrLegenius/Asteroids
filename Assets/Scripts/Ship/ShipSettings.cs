@@ -16,11 +16,13 @@ public class ShipSettings : ScriptableObject
 
     [Header("Shooting")]
     public float FireRate;
+    public AudioClip ShootingClip;
 
     [Header("Laser Firing")]
     public int LasersCount;
     public float LaserReload;
     public float LaserDuration;
     public LayerMask Layer;
+    public AudioClip LaserClip;
 }
 }

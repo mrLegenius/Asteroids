@@ -17,19 +17,22 @@ public class ShipController : IInitializable, IDisposable
     private readonly BulletsController _bulletsController;
     private readonly LaserController _laserController;
     private readonly ShipSettings _shipSettings;
+    private readonly AudioManager _audioManager;
 
     public ShipController(ShipModel model,
         ShipView shipView,
         BulletsController bulletsController,
         LaserController laserController,
         SignalBus signalBus,
-        ShipSettings shipSettings)
+        ShipSettings shipSettings,
+        AudioManager audioManager)
     {
         _shipView = shipView;
         _bulletsController = bulletsController;
         _laserController = laserController;
         _signalBus = signalBus;
         _shipSettings = shipSettings;
+        _audioManager = audioManager;
 
         _shipModel = model;
     }
@@ -111,13 +114,20 @@ public class ShipController : IInitializable, IDisposable
 
         if (!shooting.CanShoot || !shootCommanded) return;
 
+        _audioManager.PlayOneShot(_shipSettings.ShootingClip);
         _bulletsController.CreateBullet(_shipModel.Position,
             _shipModel.Angle);
 
         shooting.FireTimer = shooting.FireRate;
     }
 
-    private void HandleLaserFired() { _laserController.Fire(); }
+    private void HandleLaserFired()
+    {
+        if(!_shipModel.LaserFiring.CanFire) return;
+        
+        _laserController.Fire();
+        _audioManager.PlayOneShot(_shipSettings.LaserClip);
+    }
 
     private void Repaint() { _shipView.Repaint(_shipModel); }
 

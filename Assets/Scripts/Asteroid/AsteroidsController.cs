@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Asteroids.PoolSystem;
 using UnityEngine;
 using Zenject;
 using Object = UnityEngine.Object;
@@ -17,8 +18,9 @@ public class Asteroid
 public class AsteroidsController : ITickable, IInitializable, IDisposable
 {
     private readonly SignalBus _signalBus;
-    
+
     private readonly List<Asteroid> _asteroids = new List<Asteroid>();
+
     private readonly Dictionary<AsteroidType, Pool<Asteroid>> _pools =
         new Dictionary<AsteroidType, Pool<Asteroid>>
         {
@@ -26,15 +28,25 @@ public class AsteroidsController : ITickable, IInitializable, IDisposable
             { AsteroidType.Medium, new Pool<Asteroid>() },
             { AsteroidType.Small, new Pool<Asteroid>() }
         };
-    
+
     private bool _isGameStarted;
     private readonly Transform _asteroidsContainer;
-    private readonly AsteroidsSettings _asteroidsSettings;
-    
-    public AsteroidsController(AsteroidsSettings asteroidsSettings, SignalBus signalBus)
+    private readonly AsteroidsSettings _settings;
+    private readonly MonoPool _explosionParticlesPool;
+    private readonly AudioManager _audioManager;
+
+    public AsteroidsController(AsteroidsSettings settings,
+        SignalBus signalBus,
+        PoolManager poolManager,
+        AudioManager audioManager)
     {
         _signalBus = signalBus;
-        _asteroidsSettings = asteroidsSettings;
+        _settings = settings;
+        _audioManager = audioManager;
+        _explosionParticlesPool =
+            poolManager.CreatePoolFromGameObject(settings
+                .ExplosionParticles.gameObject);
+        
         _asteroidsContainer = new GameObject("Asteroids").transform;
         
         foreach (var pool in _pools)
@@ -54,34 +66,36 @@ public class AsteroidsController : ITickable, IInitializable, IDisposable
                     => Object.Destroy(x.View.gameObject)));
         }
     }
-    
+
     public void Initialize()
     {
         _signalBus.Subscribe<GameStartedSignal>(OnGameStarted);
         _signalBus.Subscribe<ShipDestroyedSignal>(OnShipDestroyed);
     }
+
     public void Dispose()
     {
         _signalBus.Unsubscribe<GameStartedSignal>(OnGameStarted);
         _signalBus.Unsubscribe<ShipDestroyedSignal>(OnShipDestroyed);
     }
+
     public void Tick()
     {
-        if(!_isGameStarted) return;
-        
+        if (!_isGameStarted) return;
+
         if (!_asteroids.Any())
         {
             _signalBus.Fire<DestroyedAllAsteroidsSignal>();
             return;
         }
-        
+
         foreach (var asteroid in _asteroids)
         {
             Move(asteroid.Model);
             Repaint(asteroid);
         }
     }
-    
+
     public void CreateAsteroid(AsteroidType type,
         Vector2 position,
         float angle)
@@ -96,7 +110,7 @@ public class AsteroidsController : ITickable, IInitializable, IDisposable
 
     private Asteroid ConstructAsteroid(AsteroidType type)
     {
-        var prefab = _asteroidsSettings.GetRandomAsteroidPrefab(type);
+        var prefab = _settings.GetRandomAsteroidPrefab(type);
         var view = Object.Instantiate(prefab,
             Utilities.GetFarPoint(),
             Quaternion.identity,
@@ -106,16 +120,16 @@ public class AsteroidsController : ITickable, IInitializable, IDisposable
 
         for (int i = 0; i < (int)type; i++)
         {
-            speedModifier *= _asteroidsSettings.SpeedModifier;
+            speedModifier *= _settings.SpeedModifier;
         }
-        
+
         var model = new AsteroidModel
         {
             Type = type,
-            MinSpeed = _asteroidsSettings.MinInitialSpeed * speedModifier,
-            MaxSpeed = _asteroidsSettings.MaxInitialSpeed * speedModifier,
-            AsteroidSplitCount = _asteroidsSettings.SplitCount,
-            AsteroidSpawnSpread = _asteroidsSettings.SplitSpreadAngle
+            MinSpeed = _settings.MinInitialSpeed * speedModifier,
+            MaxSpeed = _settings.MaxInitialSpeed * speedModifier,
+            AsteroidSplitCount = _settings.SplitCount,
+            AsteroidSpawnSpread = _settings.SplitSpreadAngle
         };
         model.Speed = model.GetRandomSpeed();
 
@@ -124,27 +138,31 @@ public class AsteroidsController : ITickable, IInitializable, IDisposable
             View = view,
             Model = model,
         };
-            
+
         asteroid.View.OnCollided(OnAsteroidCollided);
         asteroid.View.OnRayHit(OnAsteroidHitByRay);
         return asteroid;
     }
+
     private void Move(AsteroidModel model)
     {
-        var direction = Utilities.GetDirectionFromAngle(model.Angle * Mathf.Deg2Rad);
+        var direction =
+            Utilities.GetDirectionFromAngle(model.Angle * Mathf.Deg2Rad);
         model.Position += model.Speed * Time.deltaTime * direction;
         model.Position =
             Utilities.GetWrapAroundPosition(model.Position);
     }
+
     private void Repaint(Asteroid asteroid)
     {
         asteroid.View.Repaint(asteroid.Model);
     }
+
     private void Destroy(Asteroid asteroid)
     {
         _pools[asteroid.Model.Type].Push(asteroid);
         _asteroids.Remove(asteroid);
-        
+
         _signalBus.Fire(
             new AsteroidDestroyedSignal(asteroid.Model.ScoreOnDestroyed));
     }
@@ -152,22 +170,40 @@ public class AsteroidsController : ITickable, IInitializable, IDisposable
     private void OnAsteroidDestroyed(AsteroidView view)
     {
         var asteroid = _asteroids.FirstOrDefault(x => x.View == view);
-        
-        if(asteroid == null)
-            return;
+
+        if (asteroid == null) return;
 
         Destroy(asteroid);
 
+        _audioManager.PlayOneShot(_settings.ExplosionClip);
+        ActivateExplosion(asteroid.Model);
+        SplitAsteroid(asteroid);
+    }
+
+    private void ActivateExplosion(AsteroidModel model)
+    {
+        var explosion = _explosionParticlesPool.GetEntity();
+        explosion.transform.position = model.Position;
+        explosion.SetActive(true);
+        explosion.GetComponent<ParticleSystem>().Play();
+    }
+    
+    private void SplitAsteroid(Asteroid asteroid)
+    {
         var childType = GetChildAsteroidType(asteroid.Model.Type);
-        
-        if(!childType.HasValue) return;
+
+        if (!childType.HasValue) return;
 
         float asteroidSpawnSpread = asteroid.Model.AsteroidSpawnSpread;
         for (int i = 0; i < asteroid.Model.AsteroidSplitCount; i++)
         {
-            float spread = Random.Range(-asteroidSpawnSpread, asteroidSpawnSpread) / 2;
+            float spread =
+                Random.Range(-asteroidSpawnSpread, asteroidSpawnSpread)
+                / 2;
             float angle = spread + asteroid.Model.Angle;
-            CreateAsteroid(childType.Value, asteroid.Model.Position, angle);
+            CreateAsteroid(childType.Value,
+                asteroid.Model.Position,
+                angle);
         }
     }
 
@@ -194,15 +230,17 @@ public class AsteroidsController : ITickable, IInitializable, IDisposable
             _pools[asteroid.Model.Type].Push(asteroid);
             Object.Destroy(asteroid.View.gameObject);
         }
+
         _asteroids.Clear();
-        
+
         foreach (var pool in _pools.Values)
         {
             pool.Clear();
         }
     }
-    
-    private static AsteroidType? GetChildAsteroidType(AsteroidType currentType)
+
+    private static AsteroidType? GetChildAsteroidType(
+        AsteroidType currentType)
     {
         return currentType switch
         {

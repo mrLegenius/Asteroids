@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Asteroids.Models;
+using Asteroids.PoolSystem;
 using UnityEngine;
 using Zenject;
 using Object = UnityEngine.Object;
@@ -24,13 +25,22 @@ public class UFOController : ITickable, IInitializable, IDisposable
     private readonly Pool<UFO> _pool = new Pool<UFO>();
     private readonly List<UFO> _ufos = new List<UFO>();
 
+    private readonly MonoPool _explosionParticlesPool;
+    private readonly AudioManager _audioManager;
+    
     public UFOController(SignalBus signalBus,
         UFOSettings settings,
-        ShipModel shipModel)
+        ShipModel shipModel,
+        PoolManager poolManager,
+        AudioManager audioManager)
     {
         _signalBus = signalBus;
         _ship = shipModel;
         _ufoSettings = settings;
+        _audioManager = audioManager;
+        _explosionParticlesPool =
+            poolManager.CreatePoolFromGameObject(settings
+                .ExplosionParticles.gameObject);
 
         _ufoContainer = new GameObject("UFO").transform;
         _pool
@@ -118,10 +128,19 @@ public class UFOController : ITickable, IInitializable, IDisposable
         var ufo = _ufos.FirstOrDefault(x => x.View == view);
         if (ufo == null) return;
 
+        _audioManager.PlayOneShot(_ufoSettings.ExplosionClip);
+        ActivateExplosion(ufo.Model);
         Destroy(ufo);
     }
-
-
+    
+    private void ActivateExplosion(UFOModel model)
+    {
+        var explosion = _explosionParticlesPool.GetEntity();
+        explosion.transform.position = model.Position;
+        explosion.SetActive(true);
+        explosion.GetComponent<ParticleSystem>().Play();
+    }
+    
     private void OnUFOCollided(Collider2D other, UFOView view)
     {
         OnUFODestroyed(view);
